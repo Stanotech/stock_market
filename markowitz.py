@@ -1,10 +1,11 @@
 import numpy as np
 import pandas as pd
 from cvxpy import *
+from data_functions import *
 
-mp = pd.read_csv("market.csv",index_col=0)
+mp = data.loading(["cdr", "tim", "pko"]).set_index("Month")
 mr = pd.DataFrame()
-print(mp)
+
 # compute monthly returns
 
 for s in mp.columns:
