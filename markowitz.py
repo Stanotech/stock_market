@@ -4,9 +4,9 @@ from cvxpy import *
 
 mp = pd.read_csv("market.csv",index_col=0)
 mr = pd.DataFrame()
-
+print(mp)
 # compute monthly returns
-# print(mp)
+
 for s in mp.columns:
     date = mp.index[0]
     pr0 = mp[s][date] 
