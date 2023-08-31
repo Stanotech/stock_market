@@ -6,6 +6,7 @@ from data_functions import *
 mp = data.loading(["cdr", "tim", "pko"]).set_index("Month")
 mr = pd.DataFrame()
 
+
 # compute monthly returns
 
 for s in mp.columns:
