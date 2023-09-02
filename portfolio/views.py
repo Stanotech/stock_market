@@ -13,7 +13,7 @@ def get_assets(request):
     return Response(serializer.data)
 
 @api_view(['GET', 'POST'])
-def form(request):
+def home(request):
     if request.method == 'POST':
         selected_assets = request.data.get('selected_assets', [])
         portfolio_name = request.data.get('portfolio_name', 'My Portfolio')
