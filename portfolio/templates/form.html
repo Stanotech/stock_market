@@ -1,0 +1,59 @@
+<!-- assets/templates/form.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Formularz Portfela</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <form method="POST" id="portfolio-form">
+        {% csrf_token %}
+        <label for="selected_assets">Wybierz aktywa:</label>
+        <select id="selected_assets" name="selected_assets" multiple></select>
+        <br>
+        <label for="portfolio_name">Nazwa portfela:</label>
+        <input type="text" id="portfolio_name" name="portfolio_name" required>
+        <br>
+        <input type="submit" value="Utwórz Portfel">
+    </form>
+
+    <script>
+        $(document).ready(function() {
+            // Pobranie aktywów z serwera i dodanie ich do listy wyboru
+            $.get("/get_assets/", function(data) {
+                data.forEach(function(asset) {
+                    $("#selected_assets").append($('<option>', {
+                        value: asset.name,
+                        text: asset.name
+                    }));
+                });
+            });
+
+            // Obsługa przesyłania formularza w formie JSON
+            $("#portfolio-form").submit(function(e) {
+                e.preventDefault();
+                var selectedAssets = $("#selected_assets").val();
+                var portfolioName = $("#portfolio_name").val();
+                var portfolioData = {
+                    selected_assets: selectedAssets,
+                    portfolio_name: portfolioName
+                };
+                $.ajax({
+                    type: "POST",
+                    url: "/form/",
+                    data: JSON.stringify(portfolioData),
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function(response) {
+                        alert(response.message);
+                        location.reload();  // Odśwież stronę po sukcesie
+                    },
+                    error: function(error) {
+                        alert("Błąd podczas tworzenia portfela.");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
