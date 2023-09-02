@@ -20,3 +20,11 @@ class PortfolioAsset(models.Model):
 
     def __str__(self):
         return f"{self.asset.name} ({self.weight}%)"
+
+class AssetValue(models.Model):
+    asset = models.ForeignKey(Asset, on_delete=models.CASCADE)
+    date = models.DateField()
+    value = models.FloatField()
+
+    def __str__(self):
+        return f"{self.asset.name} - {self.date}"
