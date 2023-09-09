@@ -137,12 +137,12 @@ class DataFunctions:
 
         try:
             prob.solve()
-            print ("Optimal portfolio")
-            print ("----------------------")
+            output ={}
             for s in range(len(symbols)):
-               print (" Investment in {} : {}% of the portfolio".format(symbols[s],round(100*x.value[s],2)))
-            print ("----------------------")
-            print ("Exp ret = {}%".format(round(100*ret.value,2)))
-            print ("Expected risk    = {}%".format(round(100*risk.value**0.5,2)))
+               output[symbols[s]] = round(100*x.value[s],2)
+            output['exp_ret'] = round(100*ret.value,2)
+            output['exp_risk'] = round(100*risk.value**0.5,2)
+
+            return output
         except:
             print ("Error")
