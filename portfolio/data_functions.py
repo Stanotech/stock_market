@@ -134,7 +134,8 @@ class DataFunctions:
         # The core problem definition with the Problem class from CVXPY
         prob = Problem(Minimize(risk), [sum(x)==1, ret >= req_return, x >= 0])
 
-
+   
+   
         try:
             prob.solve()
             output ={}
