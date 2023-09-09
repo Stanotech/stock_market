@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from cvxpy import *
-from data_functions import *
+from portfolio.trash.data_functions import *
 
 mp = data.loading(["cdr", "tim", "pko"]).set_index("Month")
 mr = pd.DataFrame()
