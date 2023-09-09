@@ -11,14 +11,20 @@ def home(request):
         selected_assets = request.data.get('selected_assets', [])
         portfolio_name = request.data.get('portfolio_name', 'My Portfolio')
 
-        # Tworzenie nowego portfela
+        # Creating portfolio
         portfolio = Portfolio.objects.create(name=portfolio_name)
 
-        # Dodawanie wybranych aktywów do portfela
         for asset_name in selected_assets:
-            asset = Asset.objects.get(name=asset_name)
-            PortfolioAsset.objects.create(portfolio=portfolio, asset=asset)
+            
+
+        # Adding assets to portfolio
+        # for asset_name in selected_assets:
+        #     asset = Asset.objects.get(name=asset_name)
+        #     PortfolioAsset.objects.create(portfolio=portfolio, asset=asset, weight=0)
 
         return Response({'message': 'Portfel został utworzony pomyślnie!'})
 
-    return render(request, 'form.html')
+    # Getting all assets from database
+    assets = Asset.objects.all()
+
+    return render(request, 'form.html', {'assets': assets})

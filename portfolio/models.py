@@ -6,6 +6,14 @@ class Asset(models.Model):
     def __str__(self):
         return self.name
 
+class AssetValue(models.Model):
+    asset = models.ForeignKey(Asset, on_delete=models.CASCADE, default=None)
+    date = models.DateField()
+    value = models.FloatField()
+
+    def __str__(self):
+        return f"{self.date}"
+
 class Portfolio(models.Model):
     name = models.CharField(max_length=50)
     assets = models.ManyToManyField(Asset, through='PortfolioAsset')
@@ -20,11 +28,3 @@ class PortfolioAsset(models.Model):
 
     def __str__(self):
         return f"{self.asset.name} ({self.weight}%)"
-
-class AssetValue(models.Model):
-    asset = models.ForeignKey(Asset, on_delete=models.CASCADE)
-    date = models.DateField()
-    value = models.FloatField()
-
-    def __str__(self):
-        return f"{self.asset.name} - {self.date}"

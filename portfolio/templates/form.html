@@ -1,34 +1,32 @@
 <!-- assets/templates/form.html -->
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>Formularz Portfela</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <form method="POST" id="portfolio-form">
-        {% csrf_token %}
-        <label for="selected_assets">Wybierz aktywa:</label>
-        <select id="selected_assets" name="selected_assets" multiple></select>
-        <br>
-        <label for="portfolio_name">Nazwa portfela:</label>
-        <input type="text" id="portfolio_name" name="portfolio_name" required>
-        <br>
-        <input type="submit" value="Utwórz Portfel">
-    </form>
+    <div class="container">
+        <form method="POST" id="portfolio-form">
+            {% csrf_token %}
+            <label for="selected_assets">Wybierz aktywa:</label>
+            <select id="selected_assets" name="selected_assets" multiple>
+                {% for asset in assets %}
+                    <option value="{{ asset.name }}">{{ asset.name }}</option>
+                {% endfor %}
+            </select>
+            <br>
+            <label for="portfolio_name">Nazwa portfela:</label>
+            <input type="text" id="portfolio_name" name="portfolio_name" required>
+            <br>
+            <input type="submit" value="Utwórz Portfel">
+        </form>
+    </div>
 
     <script>
         $(document).ready(function() {
-            // Pobranie aktywów z serwera i dodanie ich do listy wyboru
-            $.get("/get_assets/", function(data) {
-                data.forEach(function(asset) {
-                    $("#selected_assets").append($('<option>', {
-                        value: asset.name,
-                        text: asset.name
-                    }));
-                });
-            });
-
             // Obsługa przesyłania formularza w formie JSON
             $("#portfolio-form").submit(function(e) {
                 e.preventDefault();

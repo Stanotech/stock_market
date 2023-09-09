@@ -1,4 +1,5 @@
 import pandas as pd
+from ..models import *
 
 class data():
 
