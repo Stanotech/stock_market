@@ -63,11 +63,11 @@ class DataFunctions:
                 continue
 
     @classmethod
-    def PrepareData(cls):
+    def PrepareData(cls, assets_input):
         
 
         # Selected assets from the list selected_assets
-        selected_assets = ['Asset1', 'Asset2', 'Asset3']  # Replace with the actual asset names
+        selected_assets = assets_input  # Replace with the actual asset names
 
         # Get a list of asset objects based on their names
         assets = Asset.objects.filter(name__in=selected_assets)
@@ -90,9 +90,9 @@ class DataFunctions:
         return df
     
     @classmethod
-    def Markovitz(cls):
+    def Markovitz(cls, assets_input):
     
-        mp = PrepareData(["cdr", "tim", "pko"]).set_index("Month")
+        mp = DataFunctions.PrepareData(assets_input).set_index("Month")
         mr = pd.DataFrame()
 
 
