@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view
 from .models import Asset, Portfolio, PortfolioAsset
 from .serializers import AssetSerializer
 from rest_framework.response import Response
-from data_functions import *
+from portfolio.data_functions import *
 
 @api_view(['GET', 'POST'])
 def home(request):
@@ -19,7 +19,7 @@ def home(request):
         mark_output = DataFunctions.Markovitz(selected_assets)
 
         # Adding assets to portfolio
-
+        print(mark_output)
         for asset_name in selected_assets:
             asset = Asset.objects.get(name=asset_name)
             PortfolioAsset.objects.create(portfolio=portfolio, asset=asset, weight=mark_output[asset_name])

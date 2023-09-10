@@ -64,43 +64,65 @@ class DataFunctions:
 
     @classmethod
     def PrepareData(cls, assets_input):
-        
-
-        # Selected assets from the list selected_assets
         selected_assets = assets_input  # Replace with the actual asset names
-
-        # Get a list of asset objects based on their names
         assets = Asset.objects.filter(name__in=selected_assets)
 
-        # Find the minimum and maximum date only for the selected assets
-        min_date = AssetValue.objects.filter(asset__in=assets).aggregate(Min('date'))['date__min']
-        max_date = AssetValue.objects.filter(asset__in=assets).aggregate(Max('date'))['date__max']
+        # Inicjalizacja pustego słownika, który będzie przechowywać dane
+        data = {'Date': []}
 
-        # Create a list of dates from min_date to max_date. Daily interval.
-        date_range = pd.date_range(min_date, max_date, freq='D')
+        # Utworzenie listy dat dla wybranych aktywów
+        date_ranges = [AssetValue.objects.filter(asset=asset).values_list('date', flat=True)
+                       for asset in assets]
+        
 
-        # Create a dictionary to store values for each asset
-        data = {'Date': date_range}
+        # Znalezienie wspólnego zakresu dat
+        common_dates = set(date_ranges[0]).intersection(*date_ranges[1:])
+
+        # Jeśli brak wspólnych dat, zakończ funkcję
+        if not common_dates:
+            return None
+
+        # Dodawanie dat do słownika
+        data['Date'] = list(common_dates)
+
+        # Dodawanie wartości dla każdego aktywa
         for asset in assets:
-            values = AssetValue.objects.filter(asset=asset, date__range=(min_date, max_date))
-            data[asset.name] = values.values_list('value', flat=True)
+            values = AssetValue.objects.filter(asset=asset, date__in=common_dates).order_by('date')
+            data[asset.name] = [value.value for value in values]
+
+        
 
         df = pd.DataFrame(data)
+        # Konwertuj kolumnę "Date" na typ daty
+        df['Date'] = pd.to_datetime(df['Date'])
+    
+        # Dodaj kolumnę "Month" na podstawie daty
+        df['Month'] = df['Date'].dt.strftime('%Y-%m')
 
+        # Changing Month column position to first
+        date_column = df.pop('Month')
+        df.insert(0, 'Month', date_column)
+
+        df.drop(columns=["Date"], inplace=True)
+        
+        print(df)
         return df
     
     @classmethod
     def Markovitz(cls, assets_input):
     
-        mp = DataFunctions.PrepareData(assets_input).set_index("Month")
+        mp = DataFunctions.PrepareData(assets_input)
+        print(mp)
         mr = pd.DataFrame()
 
 
         # compute monthly returns
 
         for s in mp.columns:
-            date = mp.index[0]
+            date = mp["Month"][0]
+            print(f"date {date}")
             pr0 = mp[s][date] 
+            print(pr0)
             for t in range(1,len(mp.index)):
                 date = mp.index[t]
                 pr1 = mp[s][date]
@@ -112,9 +134,10 @@ class DataFunctions:
         r = np.asarray(np.mean(mr, axis=0))
         C = np.asmatrix(np.cov(mr, rowvar=False))
 
-
+        print(f"mrooooooooo {mr}")
         # Get symbols
         symbols = mr.columns
+        print(f"msymmomomo  {symbols}")
 
         # Number of variables
         n = len(symbols)
@@ -139,11 +162,15 @@ class DataFunctions:
         try:
             prob.solve()
             output ={}
-            for s in range(len(symbols)):
-               output[symbols[s]] = round(100*x.value[s],2)
+            for idx, s in enumerate(symbols):
+                print(f"chujumuju  {s}  {idx}")
+                print(x.value)
+                print(round(100*x.value[idx],2))
+                output[s] = round(100*x.value[s],2)
             output['exp_ret'] = round(100*ret.value,2)
             output['exp_risk'] = round(100*risk.value**0.5,2)
-
+            print("sucess")
             return output
-        except:
-            print ("Error")
+        except Exception as e:
+            print("errorrror")
+            print (e)
