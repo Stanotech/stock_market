@@ -76,7 +76,7 @@ class DataFunctions:
         
 
         # Znalezienie wspólnego zakresu dat
-        common_dates = set(date_ranges[0]).intersection(*date_ranges[1:])
+        common_dates = sorted(set(date_ranges[0]).intersection(*date_ranges[1:]))
 
         # Jeśli brak wspólnych dat, zakończ funkcję
         if not common_dates:
@@ -105,24 +105,21 @@ class DataFunctions:
 
         df.drop(columns=["Date"], inplace=True)
         
-        print(df)
         return df
     
     @classmethod
     def Markovitz(cls, assets_input):
     
-        mp = DataFunctions.PrepareData(assets_input)
-        print(mp)
+        mp = DataFunctions.PrepareData(assets_input).set_index("Month")
+        mp = mp.sort_values(by="Month")
         mr = pd.DataFrame()
 
 
         # compute monthly returns
 
         for s in mp.columns:
-            date = mp["Month"][0]
-            print(f"date {date}")
+            date = mp.index[0]
             pr0 = mp[s][date] 
-            print(pr0)
             for t in range(1,len(mp.index)):
                 date = mp.index[t]
                 pr1 = mp[s][date]
@@ -134,10 +131,8 @@ class DataFunctions:
         r = np.asarray(np.mean(mr, axis=0))
         C = np.asmatrix(np.cov(mr, rowvar=False))
 
-        print(f"mrooooooooo {mr}")
         # Get symbols
         symbols = mr.columns
-        print(f"msymmomomo  {symbols}")
 
         # Number of variables
         n = len(symbols)
@@ -155,21 +150,15 @@ class DataFunctions:
         risk = quad_form(x, C)
 
         # The core problem definition with the Problem class from CVXPY
-        prob = Problem(Minimize(risk), [sum(x)==1, ret >= req_return, x >= 0])
-
-   
+        prob = Problem(Minimize(risk), [sum(x)==1, ret >= req_return, x >= 0])   
    
         try:
             prob.solve()
             output ={}
             for idx, s in enumerate(symbols):
-                print(f"chujumuju  {s}  {idx}")
-                print(x.value)
-                print(round(100*x.value[idx],2))
-                output[s] = round(100*x.value[s],2)
+                output[s] = round(100*x.value[idx],2)
             output['exp_ret'] = round(100*ret.value,2)
             output['exp_risk'] = round(100*risk.value**0.5,2)
-            print("sucess")
             return output
         except Exception as e:
             print("errorrror")
