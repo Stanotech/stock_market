@@ -19,18 +19,17 @@ def home(request):
         mark_output = DataFunctions.Markovitz(selected_assets)
 
         # Adding assets to portfolio
-        print(mark_output)
         for asset_name in selected_assets:
             asset = Asset.objects.get(name=asset_name)
             PortfolioAsset.objects.create(portfolio=portfolio, asset=asset, weight=mark_output[asset_name])
 
-        
+        # Generowanie wykresów
+        plot1, plot2, plot3 = DataFunctions.generate_plots(selected_assets, mark_output)
 
-        return Response({'message': 'Portfel został utworzony pomyślnie!'})
+        return render(request, 'result.html', {'message': 'Portfel został utworzony pomyślnie!', 'plot1': plot1, 'plot2': plot2, 'plot3': plot3})
 
     # Getting all assets from database
     assets = Asset.objects.all()
 
     return render(request, 'form.html', {'assets': assets})
-
 
