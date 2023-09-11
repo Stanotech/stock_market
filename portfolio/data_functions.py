@@ -6,6 +6,14 @@ from portfolio.models import Asset, AssetValue
 from django.db.models import Max, Min
 import numpy as np
 from cvxpy import *
+import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('agg')
+from io import BytesIO
+import base64
+
+
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 class DataFunctions:
 
@@ -14,7 +22,6 @@ class DataFunctions:
         data_folder = 'data'  # Name of the data folder
         files = sorted(os.listdir(data_folder))
         for file_name in files:
-            print(file_name)
             try:
                 if file_name.endswith('.txt'):
                     file_path = os.path.join(data_folder, file_name)
@@ -62,6 +69,7 @@ class DataFunctions:
                 print(f"An error occurred: {e}")
                 continue
 
+
     @classmethod
     def PrepareData(cls, assets_input):
         selected_assets = assets_input  # Replace with the actual asset names
@@ -107,9 +115,9 @@ class DataFunctions:
         
         return df
     
+    
     @classmethod
     def Markovitz(cls, assets_input):
-    
         mp = DataFunctions.PrepareData(assets_input).set_index("Month")
         mp = mp.sort_values(by="Month")
         mr = pd.DataFrame()
@@ -161,5 +169,72 @@ class DataFunctions:
             output['exp_risk'] = round(100*risk.value**0.5,2)
             return output
         except Exception as e:
-            print("errorrror")
+            print("errorbvb")
             print (e)
+
+
+    @classmethod
+    def calculate_portfolio_values(cls, selected_assets, mark_output):
+        mp = DataFunctions.PrepareData(selected_assets).set_index("Month")
+        mp = mp.sort_values(by="Month")
+        weights = [mark_output[asset_name] for asset_name in selected_assets]
+        portfolio_values = np.sum(mp[selected_assets] * weights, axis=1)
+        return portfolio_values
+    
+    
+    @classmethod
+    def get_plot_as_base64_string(cls, plt):
+        buffer = BytesIO()
+        plt.savefig(buffer, format='png')
+        buffer.seek(0)
+        plot_data = buffer.getvalue()
+        buffer.close()
+        return base64.b64encode(plot_data).decode('utf-8')
+    
+
+    @classmethod
+    def generate_plots(cls, selected_assets, mark_output):
+        plot1_path, plot2_path, plot3_path = None, None, None
+
+        # Wykres zbiorczy wartości aktywów w czasie
+        plt.figure(figsize=(12, 6))
+        mp = DataFunctions.PrepareData(selected_assets).set_index("Month")
+        mp = mp.sort_values(by="Month")
+        for asset_name in selected_assets:
+            plt.plot(mp.index, mp[asset_name], label=asset_name)
+        plt.xlabel('Czas')
+        plt.ylabel('Wartość')
+        plt.title('Wartość Aktywów w Czasie')
+        plt.legend()
+        plt.grid(True)
+        
+        # Zapisz wykres do katalogu projektu
+        plot1_path = os.path.join(PROJECT_DIR, 'static', 'plot1.png')
+        plt.savefig(plot1_path, format='png')
+
+        # Wykres wyników portfela w zależności od czasu
+        portfolio_values = DataFunctions.calculate_portfolio_values(selected_assets, mark_output)
+        plt.figure(figsize=(12, 6))
+        plt.plot(mp.index, portfolio_values, label='Portfel')
+        plt.xlabel('Czas')
+        plt.ylabel('Wartość Portfela')
+        plt.title('Wartość Portfela w Czasie')
+        plt.grid(True)
+        
+        # Zapisz wykres do katalogu projektu
+        plot2_path = os.path.join(PROJECT_DIR, 'static', 'plot2.png')
+        plt.savefig(plot2_path, format='png')
+
+        # Wykres kołowy z wagami
+        weights = [mark_output[asset_name] for asset_name in selected_assets]
+        plt.figure(figsize=(6, 6))
+        plt.pie(weights, labels=selected_assets, autopct='%1.1f%%', startangle=140)
+        plt.title('Wagi Aktywów w Portfelu')
+        
+        # Zapisz wykres do katalogu projektu
+        plot3_path = os.path.join(PROJECT_DIR, 'static', 'plot3.png')
+        plt.savefig(plot3_path, format='png')
+
+        return plot1_path, plot2_path, plot3_path
+    
+

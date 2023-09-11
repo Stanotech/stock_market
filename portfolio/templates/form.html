@@ -32,6 +32,12 @@
                 e.preventDefault();
                 var selectedAssets = $("#selected_assets").val();
                 var portfolioName = $("#portfolio_name").val();
+                
+                // Upewnij się, że selectedAssets jest listą
+                if (!Array.isArray(selectedAssets)) {
+                    selectedAssets = [selectedAssets];
+                }
+                
                 var portfolioData = {
                     selected_assets: selectedAssets,
                     portfolio_name: portfolioName
@@ -43,15 +49,16 @@
                     contentType: "application/json",
                     dataType: "json",
                     success: function(response) {
-                        alert(response.message);
+                        alert("portfolio created");
                         location.reload();  // Odśwież stronę po sukcesie
                     },
                     error: function(error) {
-                        alert("Błąd podczas tworzenia portfela.");
+                        alert("Błąd podczas tworzenia portfela. ");
                     }
                 });
             });
         });
     </script>
+    
 </body>
 </html>
