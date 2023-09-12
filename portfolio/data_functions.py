@@ -84,6 +84,7 @@ class DataFunctions:
 
         # Znalezienie wspólnego zakresu dat
         common_dates = sorted(set(date_ranges[0]).intersection(*date_ranges[1:]))
+        common_dates = common_dates[-30:]
 
         # Jeśli brak wspólnych dat, zakończ funkcję
         if not common_dates:
@@ -96,7 +97,6 @@ class DataFunctions:
         for asset in assets:
             values = AssetValue.objects.filter(asset=asset, date__in=common_dates).order_by('date')
             data[asset.name] = [value.value for value in values]
-
         
 
         df = pd.DataFrame(data)

@@ -71,11 +71,11 @@ body {
 
 /* Stylizacja obrazów */
 .result-page img {
-    max-width: 100%;
+    max-width: 150%;
     height: auto;
     display: block;
     margin: 20px auto; /* Wycentrowanie obrazów z większym odstępem */
-    max-height: 300px; /* Ograniczenie maksymalnej wysokości obrazów */
+    max-height: 500px; /* Ograniczenie maksymalnej wysokości obrazów */
 }
 
 /* Wycentrowanie wykresów */
