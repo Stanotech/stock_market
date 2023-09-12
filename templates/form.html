@@ -44,16 +44,16 @@
                 };
                 $.ajax({
                     type: "POST",
-                    url: "/form/",
+                    url: "/",
                     data: JSON.stringify(portfolioData),
                     contentType: "application/json",
                     dataType: "json",
                     success: function(response) {
                         alert("portfolio created");
-                        location.reload();  // Odśwież stronę po sukcesie
+                        window.location.href = '/result';  // Odśwież stronę po sukcesie
                     },
                     error: function(error) {
-                        alert("Błąd podczas tworzenia portfela. ");
+                        alert("Błąd podczas tworzenia portfela.");
                     }
                 });
             });

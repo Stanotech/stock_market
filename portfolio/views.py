@@ -6,7 +6,7 @@ from .models import Asset, Portfolio, PortfolioAsset
 from .serializers import AssetSerializer
 from rest_framework.response import Response
 from portfolio.data_functions import *
-
+from rest_framework import status
 
 @api_view(['GET', 'POST'])
 def home(request):
@@ -27,21 +27,19 @@ def home(request):
             PortfolioAsset.objects.create(portfolio=portfolio, asset=asset, weight=mark_output[asset_name])
 
         # Generowanie wykresów i zapisywanie ich do plików
-        plot1_path, plot2_path, plot3_path = DataFunctions.generate_plots(selected_assets, mark_output)
 
         print("madafaka")
-        return render(
-            request,
-            'result.html',
-            {
-                'message': 'Portfel został utworzony pomyślnie!',
-                'plot1_path': plot1_path,
-                'plot2_path': plot2_path,
-                'plot3_path': plot3_path,
-            },
-        )
+        response_data = {'message': 'Portfel został utworzony pomyślnie!'}
+        return Response(response_data, status=status.HTTP_200_OK)
 
     # Pobieranie wszystkich aktywów z bazy danych
     assets = Asset.objects.all()
 
     return render(request, 'form.html', {'assets': assets})
+
+
+def result(request):
+    # Tutaj możesz przeprowadzić dowolne operacje, które mają być wykonane po pomyślnym przetworzeniu danych
+    # ...
+
+    return render(request, 'result.html', {'message': 'pomyślnie!'})

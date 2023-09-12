@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,13 +9,14 @@
     <h1>{{ message }}</h1>
 
     <h2>Wykres zbiorczy wartości aktywów w czasie</h2>
-    <img src="{{ plot1_path }}" alt="Wykres zbiorczy wartości aktywów w czasie">
+    <img src="{% static 'plot1.png' %}" alt="Wykres zbiorczy wartości aktywów w czasie">
 
     <h2>Wykres wyników portfela w zależności od czasu</h2>
-    <img src="{{ plot2_path }}" alt="Wykres wyników portfela w zależności od czasu">
+    <img src="{% static 'plot2.png' %}" alt="Wykres wyników portfela w zależności od czasu">
 
     <h2>Wykres kołowy z wagami</h2>
-    <img src="{{ plot3_path }}" alt="Wykres kołowy z wagami">
+    <img src="{% static 'plot3.png' %}" alt="Wykres kołowy z wagami">
+
 
 </body>
 </html>
