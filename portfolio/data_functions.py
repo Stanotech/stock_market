@@ -13,7 +13,7 @@ from io import BytesIO
 import base64
 
 
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 class DataFunctions:
 
@@ -234,7 +234,5 @@ class DataFunctions:
         # Zapisz wykres do katalogu projektu
         plot3_path = os.path.join(PROJECT_DIR, 'static', 'plot3.png')
         plt.savefig(plot3_path, format='png')
-
-        return plot1_path, plot2_path, plot3_path
     
 
