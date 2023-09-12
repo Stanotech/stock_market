@@ -27,13 +27,13 @@
 
     <script>
         $(document).ready(function() {
-            // Obsługa przesyłania formularza w formie JSON
+            // Json form
             $("#portfolio-form").submit(function(e) {
                 e.preventDefault();
                 var selectedAssets = $("#selected_assets").val();
                 var portfolioName = $("#portfolio_name").val();
                 
-                // Upewnij się, że selectedAssets jest listą
+                // make sure that this variable is list
                 if (!Array.isArray(selectedAssets)) {
                     selectedAssets = [selectedAssets];
                 }
@@ -49,8 +49,7 @@
                     contentType: "application/json",
                     dataType: "json",
                     success: function(response) {
-                        alert("portfolio created");
-                        window.location.href = '/result';  // Odśwież stronę po sukcesie
+                        window.location.href = '/result';  // redirect
                     },
                     error: function(error) {
                         alert("Błąd podczas tworzenia portfela.");

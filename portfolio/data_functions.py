@@ -3,7 +3,6 @@ import csv
 import pandas as pd
 from datetime import datetime
 from portfolio.models import Asset, AssetValue
-from django.db.models import Max, Min
 import numpy as np
 from cvxpy import *
 import matplotlib.pyplot as plt
@@ -110,7 +109,6 @@ class DataFunctions:
         # Changing Month column position to first
         date_column = df.pop('Month')
         df.insert(0, 'Month', date_column)
-
         df.drop(columns=["Date"], inplace=True)
         
         return df
@@ -123,7 +121,7 @@ class DataFunctions:
         mr = pd.DataFrame()
 
 
-        # compute monthly returns
+        # Compute monthly returns
 
         for s in mp.columns:
             date = mp.index[0]
@@ -194,7 +192,6 @@ class DataFunctions:
 
     @classmethod
     def generate_plots(cls, selected_assets, mark_output):
-        plot1_path, plot2_path, plot3_path = None, None, None
 
         # Wykres zbiorczy wartości aktywów w czasie
         plt.figure(figsize=(12, 6))
@@ -207,11 +204,14 @@ class DataFunctions:
         plt.title('Wartość Aktywów w Czasie')
         plt.legend()
         plt.grid(True)
+    
+        # Obróć etykiety osi X o 90 stopni
+        plt.xticks(rotation=90)
         
         # Zapisz wykres do katalogu projektu
         plot1_path = os.path.join(PROJECT_DIR, 'static', 'plot1.png')
         plt.savefig(plot1_path, format='png')
-
+    
         # Wykres wyników portfela w zależności od czasu
         portfolio_values = DataFunctions.calculate_portfolio_values(selected_assets, mark_output)
         plt.figure(figsize=(12, 6))
@@ -221,10 +221,13 @@ class DataFunctions:
         plt.title('Wartość Portfela w Czasie')
         plt.grid(True)
         
+        # Obróć etykiety osi X o 90 stopni
+        plt.xticks(rotation=90)
+    
         # Zapisz wykres do katalogu projektu
         plot2_path = os.path.join(PROJECT_DIR, 'static', 'plot2.png')
         plt.savefig(plot2_path, format='png')
-
+    
         # Wykres kołowy z wagami
         weights = [mark_output[asset_name] for asset_name in selected_assets]
         plt.figure(figsize=(6, 6))
@@ -234,5 +237,5 @@ class DataFunctions:
         # Zapisz wykres do katalogu projektu
         plot3_path = os.path.join(PROJECT_DIR, 'static', 'plot3.png')
         plt.savefig(plot3_path, format='png')
-    
+        
 
