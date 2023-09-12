@@ -8,30 +8,28 @@
 </head>
 <body>
     <div class="container result-page">
-        <h1>Wynik Portfela</h1>
 
         <div class="result-details">
-            <h2>{{ message }}</h2>
 
-            <h3>Wagi aktywów:</h3>
+            <h3>Assets weights:</h3>
             <ul>
                 {% for weight in weights %}
                     <li>{{ weight }}</li>
                 {% endfor %}
             </ul>
 
-            <h3>Parametry:</h3>
+            <h3>Parameters:</h3>
             <p>{{ parameters|linebreaks }}</p>
         </div>
 
         <div class="charts">
-            <h2>Wykres zbiorczy wartości aktywów w czasie</h2>
+            <h2>A summary chart of asset values ​​over time</h2>
             <img src="{% static 'plot1.png' %}" alt="Wykres zbiorczy wartości aktywów w czasie">
         
-            <h2>Wykres wyników portfela w zależności od czasu</h2>
+            <h2>Graph of portfolio performance over time</h2>
             <img src="{% static 'plot2.png' %}" alt="Wykres wyników portfela w zależności od czasu">
         
-            <h2>Wykres kołowy z wagami</h2>
+            <h2>Pie chart with weights</h2>
             <img src="{% static 'plot3.png' %}" alt="Wykres kołowy z wagami">
         </div>
     </div>
