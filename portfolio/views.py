@@ -26,6 +26,8 @@ def home(request):
         # Generowanie wykresów i zapisywanie ich do plików
         DataFunctions.generate_plots(selected_assets, mark_output)
         response_data = {'message': 'Portfel został utworzony pomyślnie!'}
+        request.session['mark_output'] = mark_output
+        request.session['selected_assets'] = selected_assets
         return Response(response_data, status=status.HTTP_200_OK)
 
     # Pobieranie wszystkich aktywów z bazy danych
@@ -35,5 +37,21 @@ def home(request):
 
 
 def result(request):
-    
-    return render(request, 'result.html', {'message': 'portfel utworzony pomyślnie!'})
+    mark_output = request.session.get('mark_output')
+    selected_assets = request.session.get('selected_assets')
+    weights, parameters = [], []
+    for asset in selected_assets:
+        weight_str = f"Weight for {asset} asset is {mark_output[asset]}"
+        weights.append(weight_str)
+
+    exp_risk = mark_output["exp_risk"]
+    exp_ret = mark_output["exp_ret"]
+    parameters = f"Risk for this portfolio is {exp_risk}% \n Expected return of this portfolio is {exp_ret}%"
+
+
+    return render(request, 'result.html', 
+                  {'message': 'portfel utworzony pomyślnie!', 'parameters': parameters, 
+                   'weights': weights})
+
+
+        

@@ -8,6 +8,11 @@
 <body>
     <h1>{{ message }}</h1>
 
+    {% for weight in weights %}
+        <h1>{{ weight }}</h1>
+    {% endfor %}
+    <h1>{{ parameters|linebreaks }}</h1>
+
     <h2>Wykres zbiorczy wartości aktywów w czasie</h2>
     <img src="{% static 'plot1.png' %}" alt="Wykres zbiorczy wartości aktywów w czasie">
 
