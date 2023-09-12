@@ -1,42 +1,77 @@
-* assets/static/styles.css */
+/* assets/static/styles.css */
 
+/* Wspólne style dla obu stron */
 body {
     font-family: Arial, sans-serif;
     background-color: #f2f2f2;
+    text-align: center;
 }
 
 .container {
-    max-width: 400px;
+    max-width: 1200px; /* Dostosuj szerokość kontenera według potrzeb */
     margin: 0 auto;
     padding: 20px;
     background-color: #fff;
     border: 1px solid #ccc;
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: left; /* Wycentrowanie treści w kontenerze */
 }
 
-label {
-    font-weight: bold;
+/* Style dla result.html */
+.result-page {
+    background-color: #fff; /* Nowy kolor tła */
+    padding: 40px; /* Zwiększenie odstępów w kontenerze */
+    text-align: center; /* Wycentrowanie treści na środku */
+}
+
+.result-page h1 {
+    font-size: 28px; /* Powiększenie rozmiaru nagłówka */
+    color: #007BFF; /* Nowy kolor tekstu */
+    margin-bottom: 20px; /* Zwiększenie marginesu na dole */
+}
+
+.result-details {
+    text-align: left; /* Wycentrowanie treści w kontenerze */
+    margin-bottom: 30px; /* Zwiększenie marginesu na dole */
+}
+
+.result-details h2 {
+    font-size: 24px; /* Powiększenie rozmiaru nagłówka */
+    color: #333; /* Nowy kolor tekstu */
+    margin-top: 20px; /* Zwiększenie marginesu na górze */
+}
+
+.result-details h3 {
+    font-size: 20px; /* Powiększenie rozmiaru nagłówka */
+    margin-top: 10px; /* Zwiększenie marginesu na górze */
+}
+
+.result-details ul {
+    list-style-type: disc; /* Styl punktorów listy */
+    margin-left: 20px; /* Wyrównanie punktorów listy */
+}
+
+.result-details li {
+    font-size: 18px; /* Dostosowanie rozmiaru tekstu w liście */
+    margin-bottom: 5px; /* Zwiększenie marginesu między elementami listy */
+}
+
+.result-details p {
+    font-size: 18px; /* Dostosowanie rozmiaru tekstu */
+    margin-bottom: 20px;
+}
+
+/* Stylizacja obrazów */
+.result-page img {
+    max-width: 100%;
+    height: auto;
     display: block;
-    margin-top: 10px;
+    margin: 20px auto; /* Wycentrowanie obrazów z większym odstępem */
+    max-height: 300px; /* Ograniczenie maksymalnej wysokości obrazów */
 }
 
-select, input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    margin: 5px 0;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-}
-
-input[type="submit"] {
-    background-color: #007BFF;
-    color: #fff;
-    border: none;
-    padding: 10px 15px;
-    cursor: pointer;
-}
-
-input[type="submit"]:hover {
-    background-color: #0056b3;
+/* Wycentrowanie wykresów */
+.result-page .charts {
+    text-align: center;
 }
