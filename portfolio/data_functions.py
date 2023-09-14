@@ -10,6 +10,7 @@ import matplotlib
 matplotlib.use('agg')
 from io import BytesIO
 import base64
+import builtins
 
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -238,4 +239,24 @@ class DataFunctions:
         plot3_path = os.path.join(PROJECT_DIR, 'static', 'plot3.png')
         plt.savefig(plot3_path, format='png')
         
+        portfolio_values = portfolio_values.tolist()
+        print(portfolio_values)
+        return portfolio_values
+    
+    
+    @classmethod
+    def maximum_drawdown(cls, profit_data):
+
+        max_drawdown = 0.0
+        peak = profit_data[0]  # First/ start point
+
+        for value in profit_data:
+
+            if value > peak:
+                peak = value
+            else:
+                drawdown = (peak - value) / peak
+                max_drawdown = builtins.max(max_drawdown, drawdown)
+
+        return round(max_drawdown*100)
 

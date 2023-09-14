@@ -23,11 +23,15 @@ def home(request):
             asset = Asset.objects.get(name=asset_name)
             PortfolioAsset.objects.create(portfolio=portfolio, asset=asset, weight=mark_output[asset_name])
 
-        # Generowanie wykresów i zapisywanie ich do plików
-        DataFunctions.generate_plots(selected_assets, mark_output)
+        # Generating plots, saving to files, and calculate max drawdown
+        drawdown= DataFunctions.maximum_drawdown(DataFunctions.generate_plots(selected_assets, mark_output))
+
+
         response_data = {'message': 'Portfel został utworzony pomyślnie!'}
         request.session['mark_output'] = mark_output
         request.session['selected_assets'] = selected_assets
+        request.session['max_drawdown'] = drawdown
+
         return Response(response_data, status=status.HTTP_200_OK)
 
     # Pobieranie wszystkich aktywów z bazy danych
@@ -39,6 +43,7 @@ def home(request):
 def result(request):
     mark_output = request.session.get('mark_output')
     selected_assets = request.session.get('selected_assets')
+    max_drawdown = request.session.get('max_drawdown')
     weights, parameters = [], []
     for asset in selected_assets:
         weight_str = f"Weight for {asset} asset is {mark_output[asset]}"
@@ -51,7 +56,7 @@ def result(request):
 
     return render(request, 'result.html', 
                   {'message': 'portfel utworzony pomyślnie!', 'parameters': parameters, 
-                   'weights': weights})
+                   'weights': weights, 'max_drawdown' : max_drawdown})
 
 
         
