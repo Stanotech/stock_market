@@ -7,56 +7,54 @@ from rest_framework import status
 
 @api_view(['GET', 'POST'])
 def home(request):
+    """
+    Handles portfolio creation and related operations.
+    """
     if request.method == 'POST':
-        selected_assets = request.data.get('selected_assets', [])
-        print(selected_assets)
+        selected_asset_names = request.data.get('selected_assets', [])
         portfolio_name = request.data.get('portfolio_name', 'My Portfolio')
 
-        # Tworzenie portfela
+        # Create portfolio
         portfolio = Portfolio.objects.create(name=portfolio_name)
 
-        # Obliczenia związane z modelem Markovitza
-        mark_output = DataFunctions.Markovitz(selected_assets)
-        
-        # Dodawanie aktywów do portfela
-        for asset_name in selected_assets:
+        # Calculate Markowitz output
+        mark_output = DataFunctions.markovitz(selected_asset_names)
+
+        # Add assets to portfolio
+        for asset_name in selected_asset_names:
             asset = Asset.objects.get(name=asset_name)
             PortfolioAsset.objects.create(portfolio=portfolio, asset=asset, weight=mark_output[asset_name])
 
-        # Generating plots, saving to files, and calculate max drawdown
-        drawdown= DataFunctions.maximum_drawdown(DataFunctions.generate_plots(selected_assets, mark_output))
+        # Generate plots, save to files, and calculate max drawdown
+        drawdown = DataFunctions.maximum_drawdown(DataFunctions.generate_plots(selected_asset_names, mark_output))
 
-
-        response_data = {'message': 'Portfel został utworzony pomyślnie!'}
+        # Pass output to result.html
+        response_data = {'message': 'Portfolio created!'}
         request.session['mark_output'] = mark_output
-        request.session['selected_assets'] = selected_assets
+        request.session['selected_asset_names'] = selected_asset_names
         request.session['max_drawdown'] = drawdown
 
         return Response(response_data, status=status.HTTP_200_OK)
 
-    # Pobieranie wszystkich aktywów z bazy danych
+    # Get all assets from the database
     assets = Asset.objects.all()
-
     return render(request, 'form.html', {'assets': assets})
 
-
 def result(request):
+    """
+    Displays the results of portfolio creation.
+    """
     mark_output = request.session.get('mark_output')
-    selected_assets = request.session.get('selected_assets')
+    selected_asset_names = request.session.get('selected_asset_names')
     max_drawdown = request.session.get('max_drawdown')
     weights, parameters = [], []
-    for asset in selected_assets:
-        weight_str = f"Weight for {asset} asset is {mark_output[asset]}"
+
+    for asset_name in selected_asset_names:
+        weight_str = f"Weight for {asset_name} asset is {mark_output[asset_name]}"
         weights.append(weight_str)
 
-    exp_risk = mark_output["exp_risk"]
-    exp_ret = mark_output["exp_ret"]
-    parameters = f"Risk for this portfolio is {exp_risk}% \n Expected return of this portfolio is {exp_ret}%"
+    exp_risk = mark_output.get("exp_risk", 0)
+    exp_ret = mark_output.get("exp_ret", 0)
+    parameters = f"Risk for this portfolio is {exp_risk:.2f}%\nExpected return of this portfolio is {exp_ret:.2f}%"
 
-
-    return render(request, 'result.html', 
-                  {'message': 'portfel utworzony pomyślnie!', 'parameters': parameters, 
-                   'weights': weights, 'max_drawdown' : max_drawdown})
-
-
-        
+    return render(request, 'result.html', {'parameters': parameters, 'weights': weights, 'max_drawdown': max_drawdown})

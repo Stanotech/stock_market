@@ -11,17 +11,17 @@
     <div class="container">
         <form method="POST" id="portfolio-form">
             {% csrf_token %}
-            <label for="selected_assets">Wybierz aktywa:</label>
+            <label for="selected_assets">Choose assets:</label>
             <select id="selected_assets" name="selected_assets" multiple>
                 {% for asset in assets %}
                     <option value="{{ asset.name }}">{{ asset.name }}</option>
                 {% endfor %}
             </select>
             <br>
-            <label for="portfolio_name">Nazwa portfela:</label>
+            <label for="portfolio_name">Portfolio name:</label>
             <input type="text" id="portfolio_name" name="portfolio_name" required>
             <br>
-            <input type="submit" value="Utwórz Portfel">
+            <input type="submit" value="Create portfolio">
         </form>
     </div>
 
