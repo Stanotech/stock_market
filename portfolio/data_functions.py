@@ -104,7 +104,7 @@ class DataFunctions:
         # Konwertuj kolumnę "Date" na typ daty
         df['Date'] = pd.to_datetime(df['Date'])
     
-        # Dodaj kolumnę "Month" na podstawie daty
+        # Add "Month" column
         df['Month'] = df['Date'].dt.strftime('%Y-%m')
 
         # Changing Month column position to first
@@ -194,48 +194,48 @@ class DataFunctions:
     @classmethod
     def generate_plots(cls, selected_assets, mark_output):
 
-        # Wykres zbiorczy wartości aktywów w czasie
+        # Line chart of asset values over time
         plt.figure(figsize=(12, 6))
         mp = DataFunctions.PrepareData(selected_assets).set_index("Month")
         mp = mp.sort_values(by="Month")
         for asset_name in selected_assets:
             plt.plot(mp.index, mp[asset_name], label=asset_name)
-        plt.xlabel('Czas')
-        plt.ylabel('Wartość')
-        plt.title('Wartość Aktywów w Czasie')
+        plt.xlabel('Time')
+        plt.ylabel('Value')
+        plt.title('Asset Values Over Time')
         plt.legend()
         plt.grid(True)
     
-        # Obróć etykiety osi X o 90 stopni
+        # Rotate X-axis labels by 90 degrees
         plt.xticks(rotation=90)
         
-        # Zapisz wykres do katalogu projektu
+        # Save the chart to the project directory
         plot1_path = os.path.join(PROJECT_DIR, 'static', 'plot1.png')
         plt.savefig(plot1_path, format='png')
     
-        # Wykres wyników portfela w zależności od czasu
+        # Line chart of portfolio values over time
         portfolio_values = DataFunctions.calculate_portfolio_values(selected_assets, mark_output)
         plt.figure(figsize=(12, 6))
-        plt.plot(mp.index, portfolio_values, label='Portfel')
-        plt.xlabel('Czas')
-        plt.ylabel('Wartość Portfela')
-        plt.title('Wartość Portfela w Czasie')
+        plt.plot(mp.index, portfolio_values, label='Portfolio')
+        plt.xlabel('Time')
+        plt.ylabel('Portfolio Value')
+        plt.title('Portfolio Value Over Time')
         plt.grid(True)
         
-        # Obróć etykiety osi X o 90 stopni
+        # Rotate X-axis labels by 90 degrees
         plt.xticks(rotation=90)
     
-        # Zapisz wykres do katalogu projektu
+        # Save the chart to the project directory
         plot2_path = os.path.join(PROJECT_DIR, 'static', 'plot2.png')
         plt.savefig(plot2_path, format='png')
     
-        # Wykres kołowy z wagami
+        # Pie chart with asset weights
         weights = [mark_output[asset_name] for asset_name in selected_assets]
         plt.figure(figsize=(6, 6))
         plt.pie(weights, labels=selected_assets, autopct='%1.1f%%', startangle=140)
-        plt.title('Wagi Aktywów w Portfelu')
+        plt.title('Asset Weights in Portfolio')
         
-        # Zapisz wykres do katalogu projektu
+        # Save the chart to the project directory
         plot3_path = os.path.join(PROJECT_DIR, 'static', 'plot3.png')
         plt.savefig(plot3_path, format='png')
         
