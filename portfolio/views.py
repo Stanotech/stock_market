@@ -1,15 +1,18 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from rest_framework.decorators import api_view
 from .models import Asset, Portfolio, PortfolioAsset
 from rest_framework.response import Response
 from portfolio.data_functions import *
 from rest_framework import status
+from .forms import AssetForm  # Importujemy nasz nowy formularz
 
 @api_view(['GET', 'POST'])
 def home(request):
     """
     Handles portfolio creation and related operations.
     """
+    asset_form = AssetForm()  # Inicjalizujemy formularz AssetForm
+
     if request.method == 'POST':
         selected_asset_names = request.data.get('selected_assets', [])
         portfolio_name = request.data.get('portfolio_name', 'My Portfolio')
@@ -38,7 +41,7 @@ def home(request):
 
     # Get all assets from the database
     assets = Asset.objects.all()
-    return render(request, 'form.html', {'assets': assets})
+    return render(request, 'form.html', {'assets': assets, 'asset_form': asset_form})
 
 def result(request):
     """

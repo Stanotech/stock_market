@@ -12,11 +12,18 @@
         <form method="POST" id="portfolio-form">
             {% csrf_token %}
             <label for="selected_assets">Choose assets:</label>
-            <select id="selected_assets" name="selected_assets" multiple>
+            <input type="text" id="selected_assets" name="selected_assets" list="asset-list" multiple>
+            <datalist id="asset-list">
                 {% for asset in assets %}
                     <option value="{{ asset.name }}">{{ asset.name }}</option>
                 {% endfor %}
-            </select>
+            </datalist>
+            <button type="button" id="add-asset">Add Asset</button>
+            <br>
+            <br>
+            <label>Selected Assets:</label>
+            <ul id="selected-assets-list">
+            </ul>
             <br>
             <label for="portfolio_name">Portfolio name:</label>
             <input type="text" id="portfolio_name" name="portfolio_name" required>
@@ -27,17 +34,37 @@
 
     <script>
         $(document).ready(function() {
+            var selectedAssets = [];
+
+            // Function to add selected asset
+            function addSelectedAsset(asset) {
+                selectedAssets.push(asset);
+                $("#selected-assets-list").append(asset + "<br>");
+                $("#selected_assets").val(""); // Clear the input field
+            }
+
+            // Add asset button click handler
+            $("#add-asset").click(function() {
+                var asset = $("#selected_assets").val();
+                if (asset && selectedAssets.indexOf(asset) === -1) {
+                    addSelectedAsset(asset);
+                }
+            });
+
+            // Remove asset from the list
+            $("#selected-assets-list").on("click", "li", function() {
+                var asset = $(this).text();
+                selectedAssets = selectedAssets.filter(function(item) {
+                    return item !== asset;
+                });
+                $(this).remove();
+            });
+
             // Json form
             $("#portfolio-form").submit(function(e) {
                 e.preventDefault();
-                var selectedAssets = $("#selected_assets").val();
                 var portfolioName = $("#portfolio_name").val();
-                
-                // make sure that this variable is list
-                if (!Array.isArray(selectedAssets)) {
-                    selectedAssets = [selectedAssets];
-                }
-                
+
                 var portfolioData = {
                     selected_assets: selectedAssets,
                     portfolio_name: portfolioName
@@ -52,12 +79,11 @@
                         window.location.href = '/result';  // redirect
                     },
                     error: function(error) {
-                        alert("Optimalization imposible. Loosen optimization constraints ");
+                        alert("Optimization impossible. Loosen optimization constraints ");
                     }
                 });
             });
         });
     </script>
-    
 </body>
 </html>
