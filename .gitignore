@@ -3,3 +3,4 @@ venv/
 __pycache__/
 static/
 .ebextensions/
+rapid_api/
