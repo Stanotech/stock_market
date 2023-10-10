@@ -4,14 +4,14 @@ from .models import Asset, Portfolio, PortfolioAsset
 from rest_framework.response import Response
 from portfolio.data_functions import *
 from rest_framework import status
-from .forms import AssetForm  # Importujemy nasz nowy formularz
+from .forms import AssetForm 
 
 @api_view(['GET', 'POST'])
 def home(request):
     """
     Handles portfolio creation and related operations.
     """
-    asset_form = AssetForm()  # Inicjalizujemy formularz AssetForm
+    asset_form = AssetForm()
 
     if request.method == 'POST':
         selected_asset_names = request.data.get('selected_assets', [])
