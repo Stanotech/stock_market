@@ -17,6 +17,9 @@ class AssetValue(models.Model):
 class Portfolio(models.Model):
     name = models.CharField(max_length=50)
     assets = models.ManyToManyField(Asset, through='PortfolioAsset')
+    risk = models.FloatField()
+    retur = models.FloatField()
+    max_drawdown = models.FloatField()
 
     def __str__(self):
         return self.name
