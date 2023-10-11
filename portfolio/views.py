@@ -43,6 +43,11 @@ def home(request):
     assets = Asset.objects.all()
     return render(request, 'form.html', {'assets': assets, 'asset_form': asset_form})
 
+# @api_view(['GET', 'POST'])
+# def edit(request):
+#     if request.method == 'GET':
+        
+
 def result(request):
     """
     Displays the results of portfolio creation.
