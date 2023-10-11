@@ -23,13 +23,13 @@ def home(request):
         # Calculate Markowitz output
         mark_output = DataFunctions.markovitz(selected_asset_names)
 
+        # Generate plots, save to files, and calculate max drawdown
+        drawdown = DataFunctions.maximum_drawdown(DataFunctions.generate_plots(selected_asset_names, mark_output))
+
         # Add assets to portfolio
         for asset_name in selected_asset_names:
             asset = Asset.objects.get(name=asset_name)
             PortfolioAsset.objects.create(portfolio=portfolio, asset=asset, weight=mark_output[asset_name])
-
-        # Generate plots, save to files, and calculate max drawdown
-        drawdown = DataFunctions.maximum_drawdown(DataFunctions.generate_plots(selected_asset_names, mark_output))
 
         # Pass output to result.html
         response_data = {'message': 'Portfolio created!'}
