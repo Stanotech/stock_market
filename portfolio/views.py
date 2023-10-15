@@ -4,7 +4,8 @@ from .models import Asset, Portfolio, PortfolioAsset
 from rest_framework.response import Response
 from portfolio.data_functions import *
 from rest_framework import status
-from .forms import AssetForm 
+from .forms import AssetForm
+
 
 @api_view(['GET', 'POST'])
 def home(request):
@@ -17,25 +18,25 @@ def home(request):
         selected_asset_names = request.data.get('selected_assets', [])
         portfolio_name = request.data.get('portfolio_name', 'My Portfolio')
 
-        # Create portfolio
-        portfolio = Portfolio.objects.create(name=portfolio_name)
-
         # Calculate Markowitz output
         mark_output = DataFunctions.markovitz(selected_asset_names)
 
         # Generate plots, save to files, and calculate max drawdown
-        drawdown = DataFunctions.maximum_drawdown(DataFunctions.generate_plots(selected_asset_names, mark_output))
+        drawdown = DataFunctions.maximum_drawdown(
+            DataFunctions.generate_plots(selected_asset_names, mark_output))
+
+        # Create portfolio
+        portfolio = Portfolio.objects.create(
+            name=portfolio_name, risk=mark_output['exp_risk'], retur=mark_output['exp_ret'], max_drawdown=drawdown)
 
         # Add assets to portfolio
         for asset_name in selected_asset_names:
             asset = Asset.objects.get(name=asset_name)
-            PortfolioAsset.objects.create(portfolio=portfolio, asset=asset, weight=mark_output[asset_name])
+            PortfolioAsset.objects.create(
+                portfolio=portfolio, asset=asset, weight=mark_output[asset_name])
 
         # Pass output to result.html
         response_data = {'message': 'Portfolio created!'}
-        request.session['mark_output'] = mark_output
-        request.session['selected_asset_names'] = selected_asset_names
-        request.session['max_drawdown'] = drawdown
 
         return Response(response_data, status=status.HTTP_200_OK)
 
@@ -46,9 +47,9 @@ def home(request):
 # @api_view(['GET', 'POST'])
 # def edit(request):
 #     if request.method == 'GET':
-        
 
-def result(request):
+
+def result(request, name):
     """
     Displays the results of portfolio creation.
     """
