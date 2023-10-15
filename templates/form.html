@@ -79,7 +79,7 @@
                     contentType: "application/json",
                     dataType: "json",
                     success: function(response) {
-                        window.location.href = '/result';  // redirect
+                        window.location.href = `/wallets/${portfolioName}`;  // redirect
                     },
                     error: function(error) {
                         alert("Optimization impossible. Loosen optimization constraints ");
