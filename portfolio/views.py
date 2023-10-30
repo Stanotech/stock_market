@@ -5,7 +5,8 @@ from rest_framework.response import Response
 from portfolio.data_functions import *
 from rest_framework import status
 from .forms import AssetForm
-
+from rest_framework import generics
+from .serializers import *
 
 @api_view(['GET', 'POST'])
 def home(request):
@@ -53,17 +54,26 @@ def result(request, name):
     """
     Displays the results of portfolio creation.
     """
-    mark_output = request.session.get('mark_output')
-    selected_asset_names = request.session.get('selected_asset_names')
-    max_drawdown = request.session.get('max_drawdown')
-    weights, parameters = [], []
+    # mark_output = request.session.get('mark_output')
+    # selected_asset_names = request.session.get('selected_asset_names')
+    # max_drawdown = request.session.get('max_drawdown')
+    # weights, parameters = [], []
 
-    for asset_name in selected_asset_names:
-        weight_str = f"Weight for {asset_name} asset is {mark_output[asset_name]}"
-        weights.append(weight_str)
+    # for asset_name in selected_asset_names:
+    #     weight_str = f"Weight for {asset_name} asset is {mark_output[asset_name]}"
+    #     weights.append(weight_str)
 
-    exp_risk = mark_output.get("exp_risk", 0)
-    exp_ret = mark_output.get("exp_ret", 0)
-    parameters = f"Risk for this portfolio is {exp_risk:.2f}%\nExpected return of this portfolio is {exp_ret:.2f}%"
+    # exp_risk = mark_output.get("exp_risk", 0)
+    # exp_ret = mark_output.get("exp_ret", 0)
+    # parameters = f"Risk for this portfolio is {exp_risk:.2f}%\nExpected return of this portfolio is {exp_ret:.2f}%"
 
-    return render(request, 'result.html', {'parameters': parameters, 'weights': weights, 'max_drawdown': max_drawdown})
+    return render(request, 'result.html')
+
+
+class PortfolioDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = PortfolioSerializer
+
+    def get_object(self):
+        name = self.kwargs.get('name')
+        return Portfolio.objects.get(name=name)
+

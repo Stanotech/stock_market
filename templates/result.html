@@ -5,25 +5,18 @@
     <meta charset="UTF-8">
     <title>Portfolio Result</title>
     <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
+
     <div class="container result-page">
-
         <div class="result-details">
-
             <h3>Assets weights:</h3>
-            <ul>
-                {% for weight in weights %}
-                    <li>{{ weight }}</li>
-                {% endfor %}
-            </ul>
-
+            <ul></ul>
             <h3>Indicators:</h3>
-            <p>{{ parameters|linebreaks }}</p>
-            <p>max drawdown = {{ max_drawdown }}%</p>
-
+            <p></p>
         </div>
-
+        
         <div class="charts">
             <h2>A summary chart of asset values ​​over time</h2>
             <img src="{% static 'plot1.png' %}" alt="Wykres zbiorczy wartości aktywów w czasie">
@@ -35,5 +28,40 @@
             <img src="{% static 'plot3.png' %}" alt="Wykres kołowy z wagami">
         </div>
     </div>
+
+    <script>
+        $(document).ready(function() {
+            var currentURL = window.location.href;
+            var urlParts = currentURL.split('/');
+            var walletName = urlParts[urlParts.length - 1];
+
+            $.ajax({
+                url: `/api/wallets/${walletName}`,
+                method: 'GET',
+                success: function(data) {
+                    alert('Zassał jebany')
+                    console.log(data);
+                    var portfolioAssets = data.asset_weights;  // Pobierz dane dotyczące aktywów wraz z wagami
+            
+                    var parameters = data.risk + '\n' + data.retur;
+                    var maxDrawdown = data.max_drawdown;
+            
+                    // Wyświetl dane na stronie
+                    $('.result-details ul').empty();
+                    $.each(portfolioAssets, function(index, portfolioAsset) {
+                        var name = portfolioAsset.asset.name;
+                        var weight = portfolioAsset.weight;
+                        $('.result-details ul').append(`<li>${name} (${weight}%)`);
+                    });
+                    $('.result-details p').text(parameters);
+                    $('.result-details p').append(`max drawdown = ${maxDrawdown}%`);
+                },
+                error: function() {
+                    alert('Błąd podczas pobierania danych portfela.');
+                }
+            });
+        });
+    </script>   
+
 </body>
 </html>

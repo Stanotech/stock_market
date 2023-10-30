@@ -5,5 +5,5 @@ from . import views
 urlpatterns = [
     path('', views.home, name='home'),
     path('wallets/<str:name>', views.result, name='result'), 
-    # path('edit/', views.edit, name='edit'), 
+    path('api/wallets/<str:name>', views.PortfolioDetailView.as_view(), name='api'), 
 ]
