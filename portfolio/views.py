@@ -46,28 +46,11 @@ def home(request):
     assets = Asset.objects.all()
     return render(request, 'form.html', {'assets': assets, 'asset_form': asset_form})
 
-# @api_view(['GET', 'POST'])
-# def edit(request):
-#     if request.method == 'GET':
-
 
 def result(request, name):
     """
     Displays the results of portfolio creation.
     """
-    # mark_output = request.session.get('mark_output')
-    # selected_asset_names = request.session.get('selected_asset_names')
-    # max_drawdown = request.session.get('max_drawdown')
-    # weights, parameters = [], []
-
-    # for asset_name in selected_asset_names:
-    #     weight_str = f"Weight for {asset_name} asset is {mark_output[asset_name]}"
-    #     weights.append(weight_str)
-
-    # exp_risk = mark_output.get("exp_risk", 0)
-    # exp_ret = mark_output.get("exp_ret", 0)
-    # parameters = f"Risk for this portfolio is {exp_risk:.2f}%\nExpected return of this portfolio is {exp_ret:.2f}%"
-
     return render(request, 'result.html')
 
 

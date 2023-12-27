@@ -9,12 +9,12 @@
 </head>
 <body>
     <div class="container">
-        <form method="POST" id="portfolio-form">
+        <form method="POST" id="portfolio-form" action="/wallets/">
             {% csrf_token %}
             <label for="selected_assets">Choose portfolio:</label>
             <input type="text" id="portfolio_list" name="portfolio_list" list="portfolio-list" multiple>
             <datalist id="portfolio-list"></datalist>
-            <button type="button" id="view-portfolio">View portf</button>
+            <input type="submit" value="View portf">
         </form>
     </div>
 
@@ -40,6 +40,23 @@
 
     <script>
         $(document).ready(function() {
+            $('#portfolio-form').on('submit', function(event) {
+                var selectedPortfolio = $('#portfolio_list').val();
+    
+                // Sprawdź, czy coś zostało wybrane
+                if (!selectedPortfolio) {
+                    alert('Please choose a portfolio before viewing.');
+                    event.preventDefault();  // Zatrzymaj domyślną akcję przesyłania formularza
+                } else {
+                    // Dodaj nazwę portfela do adresu URL przed przesłaniem formularza
+                    var formAction = '/wallets/' + selectedPortfolio;
+                    $(this).attr('action', formAction);
+                }
+            });
+        });
+
+
+        $(document).ready(function() {
             var currentURL = window.location.href;
             var urlParts = currentURL.split('/');
             var walletName = urlParts[urlParts.length - 1];
@@ -57,7 +74,7 @@
                     });
                 },
                 error: function() {
-                    alert('Błąd podczas pobierania listy portfolio.');
+                    alert('Error while getting list of portfolios.');
                 }
             });
 
@@ -80,7 +97,7 @@
                     $('.result-details p').append(`max drawdown = ${maxDrawdown}%`);
                 },
                 error: function() {
-                    alert('Błąd podczas pobierania danych portfela.');
+                    alert('Error while getting portfolio.');
                 }
             });
         });
