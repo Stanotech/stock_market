@@ -25,7 +25,7 @@ def home(request):
 
         # Generate plots, save to files, and calculate max drawdown
         drawdown = DataFunctions.maximum_drawdown(
-            DataFunctions.generate_plots(selected_asset_names, mark_output))
+            DataFunctions.generate_plots(selected_asset_names, mark_output, portfolio_name))
 
         # Create portfolio
         portfolio = Portfolio.objects.create(

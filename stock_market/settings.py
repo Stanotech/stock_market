@@ -123,10 +123,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 
 
-STATIC_URL = '/staticfiles/'
+STATIC_URL = '/static/'                     # URL where staticfile can be found
 STATIC_ROOT = BASE_DIR / "staticfiles"      # collect static catalog
 MEDIA_URL = "/user-media/"                  # folder for users uploaded media
-STATICFILES_DIRS = [
+STATICFILES_DIRS = [                        # from where staticfiles will be collected
     os.path.join(BASE_DIR, "static"),
 ]
 

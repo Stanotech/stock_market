@@ -239,7 +239,7 @@ class DataFunctions:
         return base64.b64encode(plot_data).decode('utf-8')
 
     @classmethod
-    def generate_plots(cls, selected_assets, mark_output):
+    def generate_plots(cls, selected_assets, mark_output, nazwa_portfela):
         """
         Generate and save plots for selected assets.
 
@@ -269,7 +269,7 @@ class DataFunctions:
         plt.xticks(rotation=90)
 
         # Save the chart to the project directory
-        plot1_path = os.path.join(PROJECT_DIR, 'staticfiles', 'plot1.png')
+        plot1_path = os.path.join(PROJECT_DIR, 'static', f'{nazwa_portfela}1.png')
         plt.savefig(plot1_path, format='png')
 
         # Line chart of portfolio values over time
@@ -285,7 +285,7 @@ class DataFunctions:
         plt.xticks(rotation=90)
 
         # Save the chart to the project directory
-        plot2_path = os.path.join(PROJECT_DIR, 'staticfiles', 'plot2.png')
+        plot2_path = os.path.join(PROJECT_DIR, 'static', f'{nazwa_portfela}2.png')
         plt.savefig(plot2_path, format='png')
 
         # Pie chart with asset weights
@@ -295,7 +295,7 @@ class DataFunctions:
         plt.title('Asset Weights in Portfolio')
 
         # Save the chart to the project directory
-        plot3_path = os.path.join(PROJECT_DIR, 'staticfiles', 'plot3.png')
+        plot3_path = os.path.join(PROJECT_DIR, 'static', f'{nazwa_portfela}3.png')
         plt.savefig(plot3_path, format='png')
 
         portfolio_values = portfolio_values.tolist()
