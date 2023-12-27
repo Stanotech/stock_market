@@ -27,14 +27,14 @@
         </div>
         
         <div class="charts">
-            <h2>A summary chart of asset values ​​over time</h2>
-            <img src="{% static 'plot1.png' %}" alt="Wykres zbiorczy wartości aktywów w czasie">
+            <h2>A summary chart of asset values over time</h2>
+            <img src="{% static 'plot1.png' %}" alt="A summary chart of asset values over time" id="summary-chart">
         
             <h2>Graph of portfolio performance over time</h2>
-            <img src="{% static 'plot2.png' %}" alt="Wykres wyników portfela w zależności od czasu">
+            <img src="{% static 'plot2.png' %}" alt="Graph of portfolio performance over time" id="performance-chart">
         
             <h2>Pie chart with weights</h2>
-            <img src="{% static 'plot3.png' %}" alt="Wykres kołowy z wagami">
+            <img src="{% static 'plot3.png' %}" alt="Pie chart with weights" id="pie-chart">
         </div>
     </div>
 
@@ -82,10 +82,10 @@
                 url: `/api/wallets/${walletName}`,
                 method: 'GET',
                 success: function(data) {
-                    var portfolioAssets = data.asset_weights;  // Pobierz dane dotyczące aktywów wraz z wagami            
+                    var portfolioAssets = data.asset_weights;
                     var parameters = 'expected risk= ' + data.risk + '%<br>' + 'expected return= ' + data.retur + '%<br>';
                     var maxDrawdown = data.max_drawdown;
-            
+    
                     // Wyświetl dane na stronie
                     $('.result-details ul').empty();
                     $.each(portfolioAssets, function(index, portfolioAsset) {
@@ -95,6 +95,11 @@
                     });
                     $('.result-details p').html(parameters);
                     $('.result-details p').append(`max drawdown = ${maxDrawdown}%`);
+    
+                    // Ustaw ścieżki dla obrazków z dynamicznie uzyskaną nazwą portfela
+                    $('#summary-chart').attr('src', '/static/' + walletName + '1.png');
+                    $('#performance-chart').attr('src', '/static/' + walletName + '2.png');
+                    $('#pie-chart').attr('src', '/static/' + walletName + '3.png');
                 },
                 error: function() {
                     alert('Error while getting portfolio.');
