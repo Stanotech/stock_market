@@ -8,6 +8,15 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
+    <div class="container">
+        <form method="POST" id="portfolio-form">
+            {% csrf_token %}
+            <label for="selected_assets">Choose portfolio:</label>
+            <input type="text" id="portfolio_list" name="portfolio_list" list="portfolio-list" multiple>
+            <datalist id="portfolio-list"></datalist>
+            <button type="button" id="view-portfolio">View portf</button>
+        </form>
+    </div>
 
     <div class="container result-page">
         <div class="result-details">
@@ -36,14 +45,28 @@
             var walletName = urlParts[urlParts.length - 1];
 
             $.ajax({
+                url: '/api/wallets/',
+                method: 'GET',
+                success: function(data) {
+                    // Wyczyść datalist
+                    $('#portfolio-list').empty();
+    
+                    // Wypełnij datalist nazwami portfolio z pobranych danych
+                    $.each(data, function(index, portfolio) {
+                        $('#portfolio-list').append(`<option value="${portfolio.name}">`);
+                    });
+                },
+                error: function() {
+                    alert('Błąd podczas pobierania listy portfolio.');
+                }
+            });
+
+            $.ajax({
                 url: `/api/wallets/${walletName}`,
                 method: 'GET',
                 success: function(data) {
-                    alert('Zassał jebany')
-                    console.log(data);
-                    var portfolioAssets = data.asset_weights;  // Pobierz dane dotyczące aktywów wraz z wagami
-            
-                    var parameters = data.risk + '\n' + data.retur;
+                    var portfolioAssets = data.asset_weights;  // Pobierz dane dotyczące aktywów wraz z wagami            
+                    var parameters = 'expected risk= ' + data.risk + '%<br>' + 'expected return= ' + data.retur + '%<br>';
                     var maxDrawdown = data.max_drawdown;
             
                     // Wyświetl dane na stronie
@@ -53,7 +76,7 @@
                         var weight = portfolioAsset.weight;
                         $('.result-details ul').append(`<li>${name} (${weight}%)`);
                     });
-                    $('.result-details p').text(parameters);
+                    $('.result-details p').html(parameters);
                     $('.result-details p').append(`max drawdown = ${maxDrawdown}%`);
                 },
                 error: function() {
