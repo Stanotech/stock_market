@@ -15,6 +15,7 @@ from os import getenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+print(BASE_DIR)
 
 
 # Quick-start development settings - unsuitable for production
@@ -25,10 +26,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "/C0s%9\EwZ0xs{q[-8z(Os4tJGENb,M7^R]iO6O3N:#c!9Ct>_"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = getenv("IS_DEVELOPMENT", True)
+# DEBUG = getenv("IS_DEVELOPMENT", True)
+DEBUG = "True"
 
 ALLOWED_HOSTS = [
-    "Portfolio-env.eba-8dm4ku9f.eu-west-3.elasticbeanstalk.com", "127.0.0.1", "15.236.9.35"]
+    "Portfolio-env.eba-8dm4ku9f.eu-west-3.elasticbeanstalk.com", "127.0.0.1", "15.236.9.35", 'localhost']
 
 
 # Application definition
@@ -119,17 +121,13 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / "staticfiles"
-MEDIA_URL = "/user-media/"
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
+STATIC_URL = '/staticfiles/'
+STATIC_ROOT = BASE_DIR / "staticfiles"      # collect static catalog
+MEDIA_URL = "/user-media/"                  # folder for users uploaded media
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
-    # Dodaj inne ścieżki, jeśli potrzebujesz
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
