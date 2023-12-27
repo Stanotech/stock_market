@@ -24,3 +24,8 @@ class PortfolioSerializer(serializers.ModelSerializer):
         asset_weights = PortfolioAsset.objects.filter(portfolio=obj)
         serialized_data = PortfolioAssetSerializer(asset_weights, many=True).data
         return serialized_data
+
+class PortfoliosSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Portfolio
+        fields = ['name']

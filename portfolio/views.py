@@ -7,6 +7,7 @@ from rest_framework import status
 from .forms import AssetForm
 from rest_framework import generics
 from .serializers import *
+from rest_framework.generics import ListCreateAPIView
 
 @api_view(['GET', 'POST'])
 def home(request):
@@ -73,7 +74,12 @@ def result(request, name):
 class PortfolioDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PortfolioSerializer
 
-    def get_object(self):
-        name = self.kwargs.get('name')
-        return Portfolio.objects.get(name=name)
+    def get_object(self):                       # function run automaticly with http request
+        name = self.kwargs.get('name')          # getting portf name from request
+        return Portfolio.objects.get(name=name) # get and return proper portfolio object using serializer
 
+class PortfoliosView(ListCreateAPIView):
+    serializer_class = PortfoliosSerializer
+
+    def get_queryset(self):
+        return Portfolio.objects.all()         
