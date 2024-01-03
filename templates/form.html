@@ -31,12 +31,11 @@
             <label for="portfolio_name">Portfolio name:</label>
             <input type="text" id="portfolio_name" name="portfolio_name" required>
             <br>
-            <input type="submit" value="Create portfolio">
+            <input type="submit" value="Create portfolio" formaction="">
+            <br>
+            <button type="button" id="show-data-btn">Show data</button>
         </form>
     </div>
-    <button onclick="window.location.href='/edit';">
-        Edit Portfolios
-    </button>
 
     <script>
         $(document).ready(function() {
@@ -66,7 +65,7 @@
                 $(this).remove();
             });
 
-            // Json form
+            // creating portfolio by post req
             $("#portfolio-form").submit(function(e) {
                 e.preventDefault();
                 var portfolioName = $("#portfolio_name").val();
@@ -88,6 +87,13 @@
                         alert("Optimization impossible. Loosen optimization constraints ");
                     }
                 });
+            });
+            
+
+            $("#show-data-btn").click(function() {
+                // Redirect to the data page with selected assets in the URL
+                var redirectUrl = '/data/' + selectedAssets.join('&');
+                window.location.href = redirectUrl;
             });
         });
     </script>
