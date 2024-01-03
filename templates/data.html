@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Asset Data</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<h1>Asset Data</h1>
+
+<table id="assetTable" border="1">
+    <thead>
+        <tr>
+            <th>Month</th>
+            <th id="asset1Header"></th>
+            <th id="asset2Header"></th>
+            <!-- Dodaj kolejne nagłówki dla innych assetów -->
+        </tr>
+    </thead>
+    <tbody id="assetTableBody"></tbody>
+</table>
+
+<script>
+    $(document).ready(function() {
+        var currentURL = window.location.href;
+        var urlSegments = currentURL.split('/');
+        var assetsJoined = urlSegments[urlSegments.length - 2];
+        var assets = assetsJoined.split('&');
+
+        // Ustaw nagłówki tabeli dla assetów
+        assets.forEach(function(asset, index) {
+            $('#assetTable th[id="asset' + (index + 1) + 'Header"]').text(asset);
+        });
+
+        // Zapytaj o dane dla assetów za pomocą JS rest api
+
+        $.ajax({
+            url: '/api/data/',
+            method: 'GET',
+            data: { assets: assetsJoined },
+            success: function(data) {
+                // Wypełnij tabelę danymi
+                alert("srakataka")
+                data.forEach(function(row) {
+                    alert("sraka")
+                    var month = row.month;
+                    var values = row.values;
+
+                    var rowHtml = '<tr><td>' + month + '</td>';
+                    values.forEach(function(value) {
+                        rowHtml += '<td>' + value + '</td>';
+                    });
+                    rowHtml += '</tr>';
+
+                    $('#assetTableBody').append(rowHtml);
+                });
+            },
+            error: function() {
+                alert('Error while fetching asset data.');
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

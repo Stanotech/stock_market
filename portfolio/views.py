@@ -8,6 +8,7 @@ from .forms import AssetForm
 from rest_framework import generics
 from .serializers import *
 from rest_framework.generics import ListCreateAPIView
+import json
 
 @api_view(['GET', 'POST'])
 def home(request):
@@ -47,11 +48,17 @@ def home(request):
     return render(request, 'form.html', {'assets': assets, 'asset_form': asset_form})
 
 
-def result(request, name):
+def result(request):
     """
     Displays the results of portfolio creation.
     """
     return render(request, 'result.html')
+
+def data(request, assets):
+    """
+    Displays data of assets.
+    """
+    return render(request, 'data.html')
 
 
 class PortfolioDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -66,3 +73,25 @@ class PortfoliosView(ListCreateAPIView):
 
     def get_queryset(self):
         return Portfolio.objects.all()         
+    
+class Data(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = PortfoliosSerializer
+
+    def get(self, request, *args, **kwargs):
+        assets = self.request.query_params.get('assets')
+        assets = assets.split("&")
+        print(assets)
+        mp = DataFunctions.prepare_data(assets).reset_index().set_index("Month")
+        mp = mp.sort_values(by="Month")
+        print(mp)
+
+        data = []
+        for index, row in mp.iterrows():
+            date = index  # Tutaj zmieniamy 'row['Month']' na 'index'
+            values = row.tolist()  # Zmieniamy 'row.drop('Month').tolist()' na 'row.tolist()'
+            data.append({'month': date, 'values': values})
+            print(data)
+
+        return Response(json.dumps(data), status=status.HTTP_200_OK)
+
+  
