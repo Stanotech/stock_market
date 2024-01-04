@@ -21,7 +21,9 @@ def home(request):
         selected_asset_names = request.data.get('selected_assets', [])
         portfolio_name = request.data.get('portfolio_name', 'My Portfolio')
 
-        Portfolio.objects.get(name == portfolio_name)
+        if not Portfolio.objects.get(name = portfolio_name):
+            response_data = {'message': 'Portfolio allready exist!'}
+            return Response(response_data, status=status.HTTP_200_OK)
 
         # Calculate Markowitz output
         mark_output = DataFunctions.markovitz(selected_asset_names)
