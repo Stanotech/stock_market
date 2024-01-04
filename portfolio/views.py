@@ -87,11 +87,11 @@ class Data(generics.RetrieveUpdateDestroyAPIView):
 
         data = []
         for index, row in mp.iterrows():
-            date = index  # Tutaj zmieniamy 'row['Month']' na 'index'
-            values = row.tolist()  # Zmieniamy 'row.drop('Month').tolist()' na 'row.tolist()'
+            date = index
+            values = row.tolist()[1:]
             data.append({'month': date, 'values': values})
-            print(data)
+        print(data)
 
-        return Response(json.dumps(data), status=status.HTTP_200_OK)
+        return Response(json.loads(json.dumps(data)), status=status.HTTP_200_OK)
 
   
