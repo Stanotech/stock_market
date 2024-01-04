@@ -41,20 +41,24 @@
             data: { assets: assetsJoined },
             success: function(data) {
                 // Wypełnij tabelę danymi
-                alert("srakataka")
                 data.forEach(function(row) {
-                    alert("sraka")
                     var month = row.month;
-                    var values = row.values;
-
-                    var rowHtml = '<tr><td>' + month + '</td>';
-                    values.forEach(function(value) {
-                        rowHtml += '<td>' + value + '</td>';
-                    });
-                    rowHtml += '</tr>';
-
+                    var values = row.values;                
+                    var rowHtml = '<tr><td>' + escapeHtml(month) + '</td>' +
+                                  values.map(function(value) {
+                                      return '<td>' + escapeHtml(value) + '</td>';
+                                  }).join('') +
+                                  '</tr>';
+                
                     $('#assetTableBody').append(rowHtml);
                 });
+                
+                function escapeHtml(value) {
+                    // Funkcja do escapowania wartości HTML
+                    // Implementacja zależy od wymagań i używanej biblioteki (np. jQuery, Lodash, itp.)
+                    // Możesz użyć gotowych funkcji lub napisać własną
+                    return value;
+                }
             },
             error: function() {
                 alert('Error while fetching asset data.');
