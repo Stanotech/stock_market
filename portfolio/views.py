@@ -21,6 +21,8 @@ def home(request):
         selected_asset_names = request.data.get('selected_assets', [])
         portfolio_name = request.data.get('portfolio_name', 'My Portfolio')
 
+        Portfolio.objects.get(name == portfolio_name)
+
         # Calculate Markowitz output
         mark_output = DataFunctions.markovitz(selected_asset_names)
 
@@ -80,17 +82,14 @@ class Data(generics.RetrieveUpdateDestroyAPIView):
     def get(self, request, *args, **kwargs):
         assets = self.request.query_params.get('assets')
         assets = assets.split("&")
-        print(assets)
         mp = DataFunctions.prepare_data(assets).reset_index().set_index("Month")
         mp = mp.sort_values(by="Month")
-        print(mp)
 
         data = []
         for index, row in mp.iterrows():
             date = index
             values = row.tolist()[1:]
             data.append({'month': date, 'values': values})
-        print(data)
 
         return Response(json.loads(json.dumps(data)), status=status.HTTP_200_OK)
 
