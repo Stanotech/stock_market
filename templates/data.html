@@ -1,13 +1,19 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Asset Data</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+    
 </head>
 <body>
+<br><br><br><br><br><br>
 
-<h1>Asset Data</h1>
+<button type="button" onclick="window.location.href='/'">Go to portfolio creation</button>
+
+<h1>Assets Data</h1>
 
 <table id="assetTable" border="1">
     <thead>
@@ -45,18 +51,17 @@
                     var month = row.month;
                     var values = row.values;                
                     var rowHtml = '<tr><td>' + escapeHtml(month) + '</td>' +
-                                  values.map(function(value) {
-                                      return '<td>' + escapeHtml(value) + '</td>';
-                                  }).join('') +
-                                  '</tr>';
+                        values.map(function(value) {
+                            // Zaokrąglenie wartości do dwóch miejsc po przecinku
+                            var roundedValue = parseFloat(value).toFixed(2);
+                            return '<td>' + escapeHtml(roundedValue) + '</td>';
+                        }).join('') +
+                        '</tr>';
                 
                     $('#assetTableBody').append(rowHtml);
                 });
                 
                 function escapeHtml(value) {
-                    // Funkcja do escapowania wartości HTML
-                    // Implementacja zależy od wymagań i używanej biblioteki (np. jQuery, Lodash, itp.)
-                    // Możesz użyć gotowych funkcji lub napisać własną
                     return value;
                 }
             },
