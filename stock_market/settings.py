@@ -15,19 +15,18 @@ from os import getenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-print(BASE_DIR)
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = getenv("SECRET_KEY")
-SECRET_KEY = "/C0s%9\EwZ0xs{q[-8z(Os4tJGENb,M7^R]iO6O3N:#c!9Ct>_"
+SECRET_KEY = getenv("SECRET_KEY")
+# SECRET_KEY = "/C0s%9\EwZ0xs{q[-8z(Os4tJGENb,M7^R]iO6O3N:#c!9Ct>_"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = getenv("IS_DEVELOPMENT", True)
-DEBUG = "True"
+DEBUG = getenv("IS_DEVELOPMENT", True)
+# DEBUG = "True"
 
 ALLOWED_HOSTS = [
     "Portfolio-env.eba-8dm4ku9f.eu-west-3.elasticbeanstalk.com", "127.0.0.1", "15.236.9.35", 'localhost']
