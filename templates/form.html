@@ -81,10 +81,14 @@
                     contentType: "application/json",
                     dataType: "json",
                     success: function(response) {
-                        window.location.href = `/wallets/${portfolioName}`;  // redirect
+                        window.location.href = `/wallets/${portfolioName}`;
                     },
                     error: function(error) {
-                        alert("Optimization impossible. Loosen optimization constraints ");
+                        if (error.status === 409) {
+                            alert("Portfolio already exists!"); 
+                        } else {
+                            alert("Optimization impossible. Loosen optimization constraints !!! ");
+                        }
                     }
                 });
             });

@@ -21,38 +21,42 @@ def home(request):
         selected_asset_names = request.data.get('selected_assets', [])
         portfolio_name = request.data.get('portfolio_name', 'My Portfolio')
 
-        if not Portfolio.objects.get(name = portfolio_name):
+        try:
+            
+            portfolio = Portfolio.objects.get(name = portfolio_name)
             response_data = {'message': 'Portfolio allready exist!'}
+            return Response(response_data, status=status.HTTP_409_CONFLICT)
+        
+        except:
+
+            # Calculate Markowitz output
+            mark_output = DataFunctions.markovitz(selected_asset_names)
+
+            # Generate plots, save to files, and calculate max drawdown
+            drawdown = DataFunctions.maximum_drawdown(
+                DataFunctions.generate_plots(selected_asset_names, mark_output, portfolio_name))
+
+            # Create portfolio
+            portfolio = Portfolio.objects.create(
+                name=portfolio_name, risk=mark_output['exp_risk'], retur=mark_output['exp_ret'], max_drawdown=drawdown)
+
+            # Add assets to portfolio
+            for asset_name in selected_asset_names:
+                asset = Asset.objects.get(name=asset_name)
+                PortfolioAsset.objects.create(
+                    portfolio=portfolio, asset=asset, weight=mark_output[asset_name])
+
+            # Pass output to result.html
+            response_data = {'message': 'Portfolio created!'}
+
             return Response(response_data, status=status.HTTP_200_OK)
-
-        # Calculate Markowitz output
-        mark_output = DataFunctions.markovitz(selected_asset_names)
-
-        # Generate plots, save to files, and calculate max drawdown
-        drawdown = DataFunctions.maximum_drawdown(
-            DataFunctions.generate_plots(selected_asset_names, mark_output, portfolio_name))
-
-        # Create portfolio
-        portfolio = Portfolio.objects.create(
-            name=portfolio_name, risk=mark_output['exp_risk'], retur=mark_output['exp_ret'], max_drawdown=drawdown)
-
-        # Add assets to portfolio
-        for asset_name in selected_asset_names:
-            asset = Asset.objects.get(name=asset_name)
-            PortfolioAsset.objects.create(
-                portfolio=portfolio, asset=asset, weight=mark_output[asset_name])
-
-        # Pass output to result.html
-        response_data = {'message': 'Portfolio created!'}
-
-        return Response(response_data, status=status.HTTP_200_OK)
 
     # Get all assets from the database
     assets = Asset.objects.all()
     return render(request, 'form.html', {'assets': assets, 'asset_form': asset_form})
 
 
-def result(request):
+def result(request, name):
     """
     Displays the results of portfolio creation.
     """
