@@ -1,42 +1,94 @@
-* assets/static/styles.css */
+/* assets/static/styles.css */
 
+/* Wspólne style dla obu stron */
 body {
     font-family: Arial, sans-serif;
     background-color: #f2f2f2;
+    text-align: center;
+    margin: 0;
+}
+
+#assetTable {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, 0%);
 }
 
 .container {
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+      /* Użyj min-height zamiast height, aby uwzględnić zawartość */
+    margin: 0;
+    padding: 20px;  /* Dodaj padding, aby treść nie przylegała bezpośrednio do krawędzi kontenera */
+    width: 100%;  /* Ustaw szerokość na 100%, aby kontener zajmował całą dostępną szerokość */
+    box-sizing: border-box;  /* Ustaw box-sizing na border-box, aby padding nie zwiększał szerokości */
 }
 
-label {
-    font-weight: bold;
+/* Style dla result.html */
+.result-page {
+    background-color: #fff; /* Nowy kolor tła */
+    padding: 40px; /* Zwiększenie odstępów w kontenerze */
+    text-align: center; /* Wycentrowanie treści na środku */
+}
+
+.result-page h1 {
+    font-size: 28px; /* Powiększenie rozmiaru nagłówka */
+    color: #007BFF; /* Nowy kolor tekstu */
+    margin-bottom: 20px; /* Zwiększenie marginesu na dole */
+    text-align: center;
+}
+
+.result-details {
+    text-align: left; /* Wycentrowanie treści w kontenerze */
+    margin-bottom: 30px; /* Zwiększenie marginesu na dole */
+    text-align: center;
+}
+
+.result-details h2 {
+    font-size: 24px; /* Powiększenie rozmiaru nagłówka */
+    color: #333; /* Nowy kolor tekstu */
+    margin-top: 20px; /* Zwiększenie marginesu na górze */
+    text-align: center;
+}
+
+.result-details h3 {
+    font-size: 20px; /* Powiększenie rozmiaru nagłówka */
+    margin-top: 10px; /* Zwiększenie marginesu na górze */
+    text-align: center;
+}
+
+.result-details ul {
+    list-style-type: disc; /* Styl punktorów listy */
+    text-align: center;
+    list-style-position: inside;
+}
+
+.result-details li {
+    font-size: 18px; /* Dostosowanie rozmiaru tekstu w liście */
+    margin-bottom: 5px; /* Zwiększenie marginesu między elementami listy */
+    text-align: center;
+}
+
+.result-details p {
+    font-size: 18px; /* Dostosowanie rozmiaru tekstu */
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Stylizacja obrazów */
+.result-page img {
+    max-width: 150%;
+    height: auto;
     display: block;
-    margin-top: 10px;
+    margin: 20px auto; /* Wycentrowanie obrazów z większym odstępem */
+    max-height: 500px; /* Ograniczenie maksymalnej wysokości obrazów */
 }
 
-select, input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    margin: 5px 0;
-    border: 1px solid #ccc;
-    border-radius: 3px;
+/* Wycentrowanie wykresów */
+.result-page .charts {
+    text-align: center;
 }
 
-input[type="submit"] {
-    background-color: #007BFF;
-    color: #fff;
-    border: none;
-    padding: 10px 15px;
-    cursor: pointer;
-}
-
-input[type="submit"]:hover {
-    background-color: #0056b3;
-}
