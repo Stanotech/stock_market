@@ -5,23 +5,26 @@ body {
     font-family: Arial, sans-serif;
     background-color: #f2f2f2;
     text-align: center;
+    margin: 0;
+}
+
+#assetTable {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, 0%);
+}
+
+.container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh; 
+      /* Użyj min-height zamiast height, aby uwzględnić zawartość */
     margin: 0;
-}
-
-.container {
-    max-width: 1200px; /* Dostosuj szerokość kontenera według potrzeb */
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    text-align: center; /* Wycentrowanie treści w kontenerze */
+    padding: 20px;  /* Dodaj padding, aby treść nie przylegała bezpośrednio do krawędzi kontenera */
+    width: 100%;  /* Ustaw szerokość na 100%, aby kontener zajmował całą dostępną szerokość */
+    box-sizing: border-box;  /* Ustaw box-sizing na border-box, aby padding nie zwiększał szerokości */
 }
 
 /* Style dla result.html */
