@@ -2,5 +2,8 @@ data/
 venv/
 __pycache__/
 static/
+staticfiles/
 .ebextensions/
 rapid_api/
+db.sqlite3
+db.sqlite3-journal
