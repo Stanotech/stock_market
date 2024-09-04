@@ -10,10 +10,11 @@ import matplotlib
 from io import BytesIO
 import base64
 import builtins
+from django.conf import settings
 
 matplotlib.use('agg')
 
-PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PROJECT_DIR = settings.BASE_DIR
 
 class DataFunctions:
     @classmethod
