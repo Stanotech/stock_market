@@ -1,87 +1,83 @@
-from django.shortcuts import render, redirect
-from rest_framework.decorators import api_view
-from .models import Asset, Portfolio, PortfolioAsset
-from rest_framework.response import Response
-from portfolio.data_functions import *
-from rest_framework import status
-from .forms import AssetForm
-from rest_framework import generics
-from .serializers import PortfolioSerializer, PortfoliosSerializer
-from rest_framework.generics import ListCreateAPIView
-import json
+from django.shortcuts import render
+from rest_framework import generics  # Import dla klas generycznych
+from rest_framework.views import APIView  # Import dla APIView
+from rest_framework.response import Response  # Import dla odpowiedzi API
+from rest_framework import status  # Import statusów HTTP
+from .models import Asset, Portfolio, PortfolioAsset  # Import modeli
+from .forms import AssetForm  # Import formularza AssetForm
+from .serializers import PortfolioSerializer, PortfoliosSerializer  # Import serializerów
+from portfolio.data_functions import DataFunctions  # Import funkcji z modułu data_functions
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView  # Import ListCreateAPIView i RetrieveUpdateDestroyAPIView
+import json  # Import modułu json dla pracy z danymi w formacie JSON
 
-@api_view(['GET', 'POST'])
-def home(request):
-    """
-    Handles portfolio creation and related operations.
-    """
-    asset_form = AssetForm()
 
-    if request.method == 'POST':
+class HomeView(APIView):
+    def get(self, request, *args, **kwargs):
+        asset_form = AssetForm()
+        assets = Asset.objects.all()
+        return render(request, 'form.html', {'assets': assets, 'asset_form': asset_form})
+
+    def post(self, request, *args, **kwargs):
+        asset_form = AssetForm()
         selected_asset_names = request.data.get('selected_assets', [])
         portfolio_name = request.data.get('portfolio_name', 'My Portfolio')
 
-        try:
-            
-            portfolio = Portfolio.objects.get(name = portfolio_name)
-            response_data = {'message': 'Portfolio allready exist!'}
-            return Response(response_data, status=status.HTTP_409_CONFLICT)
-        
-        except:
+        print(f"Selected assets: {selected_asset_names}")
+        print(f"Portfolio name: {portfolio_name}")
 
-            # Calculate Markowitz output
+        try:
+            portfolio = Portfolio.objects.get(name=portfolio_name)
+            return Response({'message': 'Portfolio already exists!'}, status=status.HTTP_409_CONFLICT)
+        except Portfolio.DoesNotExist:
+            # Kontynuacja procesu tworzenia portfela
             mark_output = DataFunctions.markovitz(selected_asset_names)
 
-            # Generate plots, save to files, and calculate max drawdown
+            # Sprawdzenie wyniku mark_output
+            print(f"Markowitz output: {mark_output}")
+
+            if mark_output is None:
+                return Response({'message': 'Markowitz calculation failed'}, status=status.HTTP_400_BAD_REQUEST)
+
             drawdown = DataFunctions.maximum_drawdown(
                 DataFunctions.generate_plots(selected_asset_names, mark_output, portfolio_name))
 
-            # Create portfolio
             portfolio = Portfolio.objects.create(
                 name=portfolio_name, risk=mark_output['exp_risk'], retur=mark_output['exp_ret'], max_drawdown=drawdown)
 
-            # Add assets to portfolio
             for asset_name in selected_asset_names:
                 asset = Asset.objects.get(name=asset_name)
                 PortfolioAsset.objects.create(
                     portfolio=portfolio, asset=asset, weight=mark_output[asset_name])
 
-            # Pass output to result.html
-            response_data = {'message': 'Portfolio created!'}
+            return Response({'message': 'Portfolio created!'}, status=status.HTTP_200_OK)
 
-            return Response(response_data, status=status.HTTP_200_OK)
-
-    # Get all assets from the database
-    assets = Asset.objects.all()
-    return render(request, 'form.html', {'assets': assets, 'asset_form': asset_form})
-
-
-def result(request, name):
+class ResultView(APIView):
     """
     Displays the results of portfolio creation.
     """
-    return render(request, 'result.html')
+    def get(self, request, name):
+        return render(request, 'result.html')
 
-def data(request, assets):
+class DataView(APIView):
     """
     Displays data of assets.
     """
-    return render(request, 'data.html')
-
+    def get(self, request, assets):
+        return render(request, 'data.html')
 
 class PortfolioDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PortfolioSerializer
 
-    def get_object(self):                       # function run automaticly with http request
-        name = self.kwargs.get('name')          # getting portf name from request
-        return Portfolio.objects.get(name=name) # get and return proper portfolio object using serializer
+    def get_object(self):
+        name = self.kwargs.get('name')
+        return Portfolio.objects.get(name=name)
 
 class PortfoliosView(ListCreateAPIView):
     serializer_class = PortfoliosSerializer
 
     def get_queryset(self):
         return Portfolio.objects.all()         
-    
+
 class Data(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PortfoliosSerializer
 
@@ -98,5 +94,3 @@ class Data(generics.RetrieveUpdateDestroyAPIView):
             data.append({'month': date, 'values': values})
 
         return Response(json.loads(json.dumps(data)), status=status.HTTP_200_OK)
-
-  
