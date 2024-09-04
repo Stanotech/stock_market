@@ -1,12 +1,12 @@
 from django.contrib import admin
 from django.urls import path
-from . import views
+from .views import HomeView, ResultView, DataView, PortfolioDetailView, PortfoliosView, Data
 
 urlpatterns = [
-    path('', views.home, name='home'),
-    path('wallets/<str:name>', views.result, name='result'), 
-    path('api/wallets/<str:name>', views.PortfolioDetailView.as_view(), name='api'), 
-    path('api/wallets/', views.PortfoliosView.as_view(), name='api'), 
-    path('api/data/', views.Data.as_view(), name='apiData'), 
-    path('data/<str:assets>/', views.data,  name='data'), 
+    path('', HomeView.as_view(), name='home'),
+    path('wallets/<str:name>', ResultView.as_view(), name='result'), 
+    path('api/wallets/<str:name>', PortfolioDetailView.as_view(), name='api'), 
+    path('api/wallets/', PortfoliosView.as_view(), name='api'), 
+    path('api/data/', Data.as_view(), name='apiData'), 
+    path('data/<str:assets>/', DataView.as_view(),  name='data'), 
 ]
