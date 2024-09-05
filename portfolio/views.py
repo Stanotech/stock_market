@@ -1,6 +1,7 @@
 import json 
 from django.shortcuts import render
 
+
 # Django Rest Framework (DRF) imports
 from rest_framework import generics, status
 from rest_framework.views import APIView 
@@ -12,6 +13,8 @@ from .models import Asset, Portfolio, PortfolioAsset
 from .forms import AssetForm
 from .serializers import PortfolioSerializer, PortfoliosSerializer
 from portfolio.data_functions import DataFunctions
+
+
 class HomeView(APIView):
     def get(self, request, *args, **kwargs):
         asset_form = AssetForm()
@@ -71,13 +74,6 @@ class ResultView(APIView):
     def get(self, request, name):
         return render(request, 'result.html')
 
-class DataView(APIView):
-    """
-    Displays data of assets.
-    """
-    def get(self, request, assets):
-        return render(request, 'data.html')
-
 class PortfolioDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PortfolioSerializer
 
@@ -91,15 +87,22 @@ class PortfoliosView(ListCreateAPIView):
     def get_queryset(self):
         return Portfolio.objects.all()         
 
-class Data(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = PortfoliosSerializer
-
+class Data(generics.RetrieveAPIView):
+    """
+    Provides data of selected assets via API.
+    """
     def get(self, request, *args, **kwargs):
+        # Pobranie aktywów z parametrów zapytania
         assets = self.request.query_params.get('assets')
-        assets = assets.split("&")
+        
+        if not assets:
+            return Response({'message': 'No assets provided'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        assets = assets.split(",")
         mp = DataFunctions.prepare_data(assets).reset_index().set_index("Month")
         mp = mp.sort_values(by="Month")
 
+        # Przygotowanie danych do zwrócenia
         data = []
         for index, row in mp.iterrows():
             date = index
@@ -107,3 +110,10 @@ class Data(generics.RetrieveUpdateDestroyAPIView):
             data.append({'month': date, 'values': values})
 
         return Response(json.loads(json.dumps(data)), status=status.HTTP_200_OK)
+    
+class DataPageView(APIView):
+    """
+    Displays the data page (data.html) without requiring any additional arguments.
+    """
+    def get(self, request, *args, **kwargs):
+        return render(request, 'data.html')

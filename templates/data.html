@@ -19,8 +19,7 @@
     <thead>
         <tr>
             <th>Month</th>
-            <th id="asset1Header"></th>
-            <th id="asset2Header"></th>
+            <!-- Nagłówki aktywów zostaną dodane dynamicznie -->
         </tr>
     </thead>
     <tbody id="assetTableBody"></tbody>
@@ -28,45 +27,57 @@
 
 <script>
     $(document).ready(function() {
-        // Parsing
+        // Pobranie parametrów z URL
         const urlParams = new URLSearchParams(window.location.search);
-        const assetsJoined = urlParams.get('assets');  // Take 'assets' from parameters
-        const assets = assetsJoined ? assetsJoined.split('&') : [];
+        const assetsJoined = urlParams.get('assets');  // Pobranie parametrów 'assets' z URL
+        const assets = assetsJoined ? assetsJoined.split(',') : [];
 
-        // Set labels for assets for table
+        // Dodaj dynamicznie nagłówki tabeli dla assetów
         assets.forEach(function(asset, index) {
-            $('#assetTable th[id="asset' + (index + 1) + 'Header"]').text(asset);
+            $('#assetTable thead tr').append('<th>' + escapeHtml(asset) + '</th>');
         });
 
-        // Ask for data for assets with JS REST API
+        // Zapytaj o dane dla assetów za pomocą JS rest api
         $.ajax({
             url: '/api/data/',
             method: 'GET',
             data: { assets: assetsJoined },
             success: function(data) {
-                // Fill the table with data
+                // Wypełnij tabelę danymi
                 data.forEach(function(row) {
                     var month = row.month;
-                    var values = row.values;
+                    var values = row.values;                
                     var rowHtml = '<tr><td>' + escapeHtml(month) + '</td>' +
                         values.map(function(value) {
-                            // Round number
+                            // Zaokrąglenie wartości do dwóch miejsc po przecinku
                             var roundedValue = parseFloat(value).toFixed(2);
                             return '<td>' + escapeHtml(roundedValue) + '</td>';
                         }).join('') +
                         '</tr>';
-
+                
                     $('#assetTableBody').append(rowHtml);
                 });
-
-                function escapeHtml(value) {
-                    return value;
-                }
             },
             error: function() {
                 alert('Error while fetching asset data.');
             }
         });
+
+        function escapeHtml(value) {
+            var entityMap = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;',
+                '/': '&#x2F;',
+                '`': '&#x60;',
+                '=': '&#x3D;'
+            };
+            return String(value).replace(/[&<>"'`=\/]/g, function(s) {
+                return entityMap[s];
+            });
+        }
     });
 </script>
 
