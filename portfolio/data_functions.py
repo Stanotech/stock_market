@@ -194,6 +194,7 @@ class DataFunctions:
             output['exp_risk'] = round(100 * risk.value**0.5, 2)
             return output
         except Exception as e:
+
             print("Error:")
             print(e)
 
@@ -212,6 +213,7 @@ class DataFunctions:
         Returns:
             numpy.ndarray: An array containing portfolio values over time.
         """
+        print(selected_assets)
         mp = DataFunctions.prepare_data(selected_assets).set_index("Month")
         mp = mp.sort_values(by="Month")
         weights = [mark_output[asset_name] for asset_name in selected_assets]

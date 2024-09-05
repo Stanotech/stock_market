@@ -28,38 +28,37 @@
 
 <script>
     $(document).ready(function() {
-        var currentURL = window.location.href;
-        var urlSegments = currentURL.split('/');
-        var assetsJoined = urlSegments[urlSegments.length - 2];
-        var assets = assetsJoined.split('&');
+        // Parsing
+        const urlParams = new URLSearchParams(window.location.search);
+        const assetsJoined = urlParams.get('assets');  // Take 'assets' from parameters
+        const assets = assetsJoined ? assetsJoined.split('&') : [];
 
-        // Ustaw nagłówki tabeli dla assetów
+        // Set labels for assets for table
         assets.forEach(function(asset, index) {
             $('#assetTable th[id="asset' + (index + 1) + 'Header"]').text(asset);
         });
 
-        // Zapytaj o dane dla assetów za pomocą JS rest api
-
+        // Ask for data for assets with JS REST API
         $.ajax({
             url: '/api/data/',
             method: 'GET',
             data: { assets: assetsJoined },
             success: function(data) {
-                // Wypełnij tabelę danymi
+                // Fill the table with data
                 data.forEach(function(row) {
                     var month = row.month;
-                    var values = row.values;                
+                    var values = row.values;
                     var rowHtml = '<tr><td>' + escapeHtml(month) + '</td>' +
                         values.map(function(value) {
-                            // Zaokrąglenie wartości do dwóch miejsc po przecinku
+                            // Round number
                             var roundedValue = parseFloat(value).toFixed(2);
                             return '<td>' + escapeHtml(roundedValue) + '</td>';
                         }).join('') +
                         '</tr>';
-                
+
                     $('#assetTableBody').append(rowHtml);
                 });
-                
+
                 function escapeHtml(value) {
                     return value;
                 }
