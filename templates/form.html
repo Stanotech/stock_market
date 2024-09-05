@@ -40,23 +40,23 @@
     <script>
         $(document).ready(function() {
             var selectedAssets = [];
-
-            // Function to add selected asset
+    
+            // Funkcja dodająca aktywa
             function addSelectedAsset(asset) {
                 selectedAssets.push(asset);
                 $("#selected-assets-list").append(asset + "<br>");
-                $("#selected_assets").val(""); // Clear the input field
+                $("#selected_assets").val("");  // Wyczyszczenie pola input
             }
-
-            // Add asset button click handler
+    
+            // Obsługa kliknięcia przycisku dodawania aktywa
             $("#add-asset").click(function() {
                 var asset = $("#selected_assets").val();
                 if (asset && selectedAssets.indexOf(asset) === -1) {
                     addSelectedAsset(asset);
                 }
             });
-
-            // Remove asset from the list
+    
+            // Usuwanie aktywa z listy
             $("#selected-assets-list").on("click", "li", function() {
                 var asset = $(this).text();
                 selectedAssets = selectedAssets.filter(function(item) {
@@ -64,16 +64,17 @@
                 });
                 $(this).remove();
             });
-
-            // creating portfolio by post req
+    
+            // Obsługa tworzenia portfela
             $("#portfolio-form").submit(function(e) {
                 e.preventDefault();
                 var portfolioName = $("#portfolio_name").val();
-
+    
                 var portfolioData = {
                     selected_assets: selectedAssets,
                     portfolio_name: portfolioName
                 };
+    
                 $.ajax({
                     type: "POST",
                     url: "/",
@@ -85,19 +86,19 @@
                     },
                     error: function(error) {
                         if (error.status === 409) {
-                            alert("Portfolio already exists!"); 
+                            alert("Portfolio already exists!");
                         } else {
-                            alert("Optimization impossible. Loosen optimization constraints !!! ");
+                            alert("Optimization impossible. Loosen optimization constraints!");
                         }
                     }
                 });
             });
-            
-
+    
+            // Przyciski wyświetlania danych
             $("#show-data-btn").click(function() {
-                // Redirect to the data page with selected assets in the URL
-                var redirectUrl = '/data/' + selectedAssets.join('&');
-                window.location.href = redirectUrl;
+                // Przekierowanie do strony danych z wybranymi aktywami
+                var assetsQueryParam = selectedAssets.join(',');
+                window.location.href = `/data/?assets=${assetsQueryParam}`;  // Generujemy link do strony
             });
         });
     </script>
