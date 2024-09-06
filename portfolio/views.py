@@ -39,19 +39,15 @@ class HomeView(APIView):
         
         except Portfolio.DoesNotExist:
             # Markowivz calculation
-            print("tuprzed")
-            print(selected_asset_names)
             mark_output = DataFunctions.markovitz(selected_asset_names)
-            print("tupo")
+            print(mark_output)
 
             if mark_output is None:
                 return Response({'message': 'Markowitz calculation failed'}, status=status.HTTP_400_BAD_REQUEST)
 
-            print("jeszczetu")
             # Generating plots and max drawdown
             drawdown = DataFunctions.maximum_drawdown(
                 DataFunctions.generate_plots(selected_asset_names, mark_output, portfolio_name))
-            print("jeszczetu")
 
             # Creating portfolio
             portfolio = Portfolio.objects.create(
