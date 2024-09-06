@@ -48,12 +48,12 @@
             $('#portfolio-form').on('submit', function(event) {
                 var selectedPortfolio = $('#portfolio_list').val();
     
-                // Sprawdź, czy coś zostało wybrane
+                // Check is something is selected
                 if (!selectedPortfolio) {
                     alert('Please choose a portfolio before viewing.');
                     event.preventDefault();  // Zatrzymaj domyślną akcję przesyłania formularza
                 } else {
-                    // Dodaj nazwę portfela do adresu URL przed przesłaniem formularza
+                    // Add wallet name to url
                     var formAction = '/wallets/' + selectedPortfolio;
                     $(this).attr('action', formAction);
                 }
@@ -64,16 +64,16 @@
         $(document).ready(function() {
             var currentURL = window.location.href;
             var urlParts = currentURL.split('/');
-            var walletName = urlParts[urlParts.length - 1];
+            var walletName = urlParts[urlParts.length - 2];
 
             $.ajax({
                 url: '/api/wallets/',
                 method: 'GET',
                 success: function(data) {
-                    // Wyczyść datalist
+                    // clear datalist
                     $('#portfolio-list').empty();
     
-                    // Wypełnij datalist nazwami portfolio z pobranych danych
+                    // Fill the datalist with assets names from received data
                     $.each(data, function(index, portfolio) {
                         $('#portfolio-list').append(`<option value="${portfolio.name}">`);
                     });
@@ -91,7 +91,7 @@
                     var parameters = 'expected risk= ' + data.risk + '%<br>' + 'expected return= ' + data.retur + '%<br>';
                     var maxDrawdown = data.max_drawdown;
     
-                    // Wyświetl dane na stronie
+                    // View data on site
                     $('.result-details ul').empty();
                     $.each(portfolioAssets, function(index, portfolioAsset) {
                         var name = portfolioAsset.asset.name;
@@ -101,10 +101,10 @@
                     $('.result-details p').html(parameters);
                     $('.result-details p').append(`max drawdown = ${maxDrawdown}%`);
     
-                    // Ustaw ścieżki dla obrazków z dynamicznie uzyskaną nazwą portfela
-                    $('#summary-chart').attr('src', '/static/' + walletName + '1.png');
-                    $('#performance-chart').attr('src', '/static/' + walletName + '2.png');
-                    $('#pie-chart').attr('src', '/static/' + walletName + '3.png');
+                    // Set the paths for plots
+                    $('#summary-chart').attr('src', '{% static walletName %}1.png');
+                    $('#performance-chart').attr('src', '{% static walletName %}2.png');
+                    $('#pie-chart').attr('src', '{% static walletName %}3.png');
                 },
                 error: function() {
                     alert('Error while getting portfolio.');

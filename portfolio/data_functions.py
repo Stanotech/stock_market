@@ -136,15 +136,6 @@ class DataFunctions:
     def markovitz(cls, assets_input):
         """
         Perform Markowitz portfolio optimization.
-
-        This function takes a list of asset names as input, retrieves their data,
-        and performs Markowitz portfolio optimization to determine asset weights.
-
-        Args:
-            assets_input (list): A list of asset names to include in the analysis.
-
-        Returns:
-            dict: A dictionary containing asset weights and other portfolio statistics.
         """
         mp = DataFunctions.prepare_data(assets_input).set_index("Month")
         mp = mp.sort_values(by="Month")
@@ -158,7 +149,7 @@ class DataFunctions:
                 date = mp.index[t]
                 pr1 = mp[s][date]
                 ret = (pr1 - pr0) / pr0
-                mr._set_value(date, s, ret)
+                mr.at[date, s] = ret
                 pr0 = pr1
 
         r = np.asarray(np.mean(mr, axis=0))
@@ -174,7 +165,7 @@ class DataFunctions:
         x = Variable(n)
 
         # The minimum return
-        req_return = 0.02
+        req_return = 0.01
 
         # The return
         ret = r.T @ x
@@ -187,16 +178,20 @@ class DataFunctions:
 
         try:
             prob.solve()
-            output = {}
-            for idx, s in enumerate(symbols):
-                output[s] = round(100 * x.value[idx], 2)
-            output['exp_ret'] = round(100 * ret.value, 2)
-            output['exp_risk'] = round(100 * risk.value**0.5, 2)
-            return output
+            if prob.status == 'optimal':
+                output = {}
+                for idx, s in enumerate(symbols):
+                    output[s] = round(100 * x.value[idx], 2)
+                output['exp_ret'] = round(100 * ret.value, 2)
+                output['exp_risk'] = round(100 * risk.value**0.5, 2)
+                return output
+            else:
+                print("Brak wyników optymalizacji. Status:", prob.status)
+                return None
         except Exception as e:
-
             print("Error:")
             print(e)
+
 
     @classmethod
     def calculate_portfolio_values(cls, selected_assets, mark_output):
@@ -213,7 +208,6 @@ class DataFunctions:
         Returns:
             numpy.ndarray: An array containing portfolio values over time.
         """
-        print(selected_assets)
         mp = DataFunctions.prepare_data(selected_assets).set_index("Month")
         mp = mp.sort_values(by="Month")
         weights = [mark_output[asset_name] for asset_name in selected_assets]
