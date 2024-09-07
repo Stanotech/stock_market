@@ -45,73 +45,63 @@
 
     <script>
         $(document).ready(function() {
-            $('#portfolio-form').on('submit', function(event) {
-                var selectedPortfolio = $('#portfolio_list').val();
+            // Przechowaj podstawową ścieżkę do plików statycznych w zmiennej
+            var staticPath = "{% static '' %}";
     
-                // Check is something is selected
-                if (!selectedPortfolio) {
-                    alert('Please choose a portfolio before viewing.');
-                    event.preventDefault();  // Zatrzymaj domyślną akcję przesyłania formularza
-                } else {
-                    // Add wallet name to url
-                    var formAction = '/wallets/' + selectedPortfolio;
-                    $(this).attr('action', formAction);
-                }
-            });
-        });
-
-
-        $(document).ready(function() {
+            // Pobierz aktualny URL
             var currentURL = window.location.href;
             var urlParts = currentURL.split('/');
-            var walletName = urlParts[urlParts.length - 2];
-
+            var walletName = urlParts[urlParts.length - 2]; // Nazwa portfela z URL
+    
+            // Ustaw ścieżki do obrazków
+            $('#summary-chart').attr('src', staticPath + walletName + '1.png');
+            $('#performance-chart').attr('src', staticPath + walletName + '2.png');
+            $('#pie-chart').attr('src', staticPath + walletName + '3.png');
+    
+            // AJAX: Pobieranie listy portfeli
             $.ajax({
                 url: '/api/wallets/',
                 method: 'GET',
                 success: function(data) {
-                    // clear datalist
+                    // Wyczyść datalistę
                     $('#portfolio-list').empty();
     
-                    // Fill the datalist with assets names from received data
+                    // Wypełnij datalistę nazwami portfeli
                     $.each(data, function(index, portfolio) {
-                        $('#portfolio-list').append(`<option value="${portfolio.name}">`);
+                        $('#portfolio-list').append('<option value="' + portfolio.name + '">');
                     });
                 },
                 error: function() {
                     alert('Error while getting list of portfolios.');
                 }
             });
-
+    
+            // AJAX: Pobieranie szczegółów wybranego portfela
             $.ajax({
-                url: `/api/wallets/${walletName}`,
+                url: '/api/wallets/' + walletName,
                 method: 'GET',
                 success: function(data) {
                     var portfolioAssets = data.asset_weights;
                     var parameters = 'expected risk= ' + data.risk + '%<br>' + 'expected return= ' + data.retur + '%<br>';
                     var maxDrawdown = data.max_drawdown;
     
-                    // View data on site
+                    // Wyświetl dane na stronie
                     $('.result-details ul').empty();
                     $.each(portfolioAssets, function(index, portfolioAsset) {
                         var name = portfolioAsset.asset.name;
                         var weight = portfolioAsset.weight;
-                        $('.result-details ul').append(`<li>${name} (${weight}%)`);
+                        $('.result-details ul').append('<li>' + name + ' (' + weight + '%)</li>');
                     });
                     $('.result-details p').html(parameters);
-                    $('.result-details p').append(`max drawdown = ${maxDrawdown}%`);
-    
-                    // Set the paths for plots
-                    $('#summary-chart').attr('src', '{% static walletName %}1.png');
-                    $('#performance-chart').attr('src', '{% static walletName %}2.png');
-                    $('#pie-chart').attr('src', '{% static walletName %}3.png');
+                    $('.result-details p').append('max drawdown = ' + maxDrawdown + '%');
                 },
                 error: function() {
                     alert('Error while getting portfolio.');
                 }
             });
         });
-    </script>   
+    </script>
+       
 
 </body>
 </html>
