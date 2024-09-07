@@ -40,7 +40,6 @@ class HomeView(APIView):
         except Portfolio.DoesNotExist:
             # Markowivz calculation
             mark_output = DataFunctions.markovitz(selected_asset_names)
-            print(mark_output)
 
             if mark_output is None:
                 return Response({'message': 'Markowitz calculation failed'}, status=status.HTTP_400_BAD_REQUEST)
