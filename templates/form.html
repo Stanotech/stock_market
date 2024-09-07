@@ -9,18 +9,20 @@
 </head>
 <body>
     <div class="container">
-        <p> This application is for portfolio management using the Markovitz theory. </p>
-        <p> For more info check <a href="https://medium.com/@JaveriaSaif/markowitz-portfolio-6789a65f26d3" target="_blank">theory</a> </p>
+        <p>This application is for portfolio management using the Markovitz theory.</p>
+        <p>For more info check <a href="https://medium.com/@JaveriaSaif/markowitz-portfolio-6789a65f26d3" target="_blank">theory</a></p>
         <br>
         <form method="POST" id="portfolio-form">
             {% csrf_token %}
-            <label for="selected_assets">Choose assets:</label>
-            <input type="text" id="selected_assets" name="selected_assets" list="asset-list" multiple>
-            <datalist id="asset-list">
+            <label for="selected_assets">Select the tickers of Polish joint-stock companies that you want to add to your portfolio:</label>
+            <br>
+            <!-- Zmienione pole input na select -->
+            <select id="selected_assets" name="selected_assets">
+                <option value="" disabled selected>Select an asset</option>
                 {% for asset in assets %}
                     <option value="{{ asset.name }}">{{ asset.name }}</option>
                 {% endfor %}
-            </datalist>
+            </select>
             <button type="button" id="add-asset">Add Asset</button>
             <br>
             <br>
@@ -40,14 +42,14 @@
     <script>
         $(document).ready(function() {
             var selectedAssets = [];
-    
+
             // Funkcja dodająca aktywa
             function addSelectedAsset(asset) {
                 selectedAssets.push(asset);
-                $("#selected-assets-list").append(asset + "<br>");
-                $("#selected_assets").val("");
+                $("#selected-assets-list").append("<li>" + asset + "</li>");
+                $("#selected_assets").val(""); // Zresetowanie wyboru w select
             }
-    
+
             // Obsługa kliknięcia przycisku dodawania aktywa
             $("#add-asset").click(function() {
                 var asset = $("#selected_assets").val();
@@ -55,7 +57,7 @@
                     addSelectedAsset(asset);
                 }
             });
-    
+
             // Usuwanie aktywa z listy
             $("#selected-assets-list").on("click", "li", function() {
                 var asset = $(this).text();
@@ -64,17 +66,17 @@
                 });
                 $(this).remove();
             });
-    
+
             // Obsługa tworzenia portfela
             $("#portfolio-form").submit(function(e) {
                 e.preventDefault();
                 var portfolioName = $("#portfolio_name").val();
-    
+
                 var portfolioData = {
                     selected_assets: selectedAssets,
                     portfolio_name: portfolioName
                 };
-    
+
                 $.ajax({
                     type: "POST",
                     url: "/",
@@ -93,7 +95,7 @@
                     }
                 });
             });
-    
+
             // Przyciski wyświetlania danych
             $("#show-data-btn").click(function() {
                 // Przekierowanie do strony danych z wybranymi aktywami
