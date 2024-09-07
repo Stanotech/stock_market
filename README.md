@@ -5,4 +5,4 @@ I created an application to create an optimal investment portfolio for selected 
 
 (Pandas, Rest API, data processing, database operations, datascience, Django, AWS deploy)
 
-http://Portfolio-env.eba-8dm4ku9f.eu-west-3.elasticbeanstalk.com
+http://portfoliomarkowitz.eu-central-1.elasticbeanstalk.com
