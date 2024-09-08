@@ -5,4 +5,9 @@ I created an application to create an optimal investment portfolio for selected 
 
 (Django, Pandas, Rest API, data processing, database operations, datascience, AWS deploy)
 
+I optimized the costs of the AWS server, I set an instance operation schedule. (AWS lambda, EventBridge, IAM roles and policies)
+
+
+The instance is enabled from 8 a.m. to 6 p.m. CET, Monday to Friday. 
+
 http://portfoliomarkowitz.eu-central-1.elasticbeanstalk.com
